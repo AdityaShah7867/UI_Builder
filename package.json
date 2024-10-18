@@ -9,9 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "grapesjs": "^0.21.13",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.7.2",
+    "next": "14.2.15",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.2.15"
+    "react-hot-toast": "^2.4.1"
   },
   "devDependencies": {
     "postcss": "^8",
