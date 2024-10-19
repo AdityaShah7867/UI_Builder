@@ -11,6 +11,7 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "grapesjs": "^0.21.13",
+    "grapesjs-blocks-basic": "^1.0.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.7.2",
     "next": "14.2.15",
