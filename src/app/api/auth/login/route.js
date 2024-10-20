@@ -23,7 +23,18 @@ export async function POST(req) {
       expiresIn: '1h',
     });
 
-    return new Response(JSON.stringify({ token, message: 'Login successful' }), { status: 200 });
+    // Create a user object without the password
+    const userWithoutPassword = {
+      _id: user._id,
+      email: user.email,
+      // Add any other user fields you want to include
+    };
+
+    return new Response(JSON.stringify({ 
+      token, 
+      user: userWithoutPassword, 
+      message: 'Login successful' 
+    }), { status: 200 });
   } catch (error) {
     console.error(error); // Log the error for debugging
     return new Response(JSON.stringify({ message: 'Internal server error' }), { status: 500 });

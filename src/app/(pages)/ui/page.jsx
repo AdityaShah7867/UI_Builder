@@ -1,49 +1,41 @@
 'use client'
-import { useEffect } from 'react';
-import grapesjs from 'grapesjs';
+import React, { useEffect } from 'react'
+import grapesjs from 'grapesjs'
 
-const Builder = () => {
+const page = () => {
   useEffect(() => {
-    // Initialize GrapesJS
     const editor = grapesjs.init({
       container: '#gjs',
       fromElement: true,
       height: '100vh',
       width: 'auto',
-      storageManager: {
-        type: 'local', // Change this if you want to use a different storage type
+      storageManager: { autoload: 0 },
+      panels: { defaults: [] },
+      plugins: ['gjs-blocks-basic'],
+      // Add responsive breakpoints
+      deviceManager: {
+        devices: [
+          { name: 'Desktop', width: '1200px' },
+          { name: 'Tablet', width: '768px' },
+          { name: 'Mobile', width: '320px' },
+        ],
       },
-      plugins: ['gjs-blocks-basic'], // Add any additional plugins you want to use
-      pluginsOpts: {
-        'gjs-blocks-basic': {},
-      },
+      // Add default components and styles
+      components: '<h1>Hello World</h1>',
+      style: '.my-class { color: red; }',
     });
 
-    // Optional: Add commands for saving
-    editor.Commands.add('save-design', {
-      run: (editor) => {
-        const html = editor.getHtml();
-        const css = editor.getCss();
-        console.log('HTML:', html);
-        console.log('CSS:', css);
-        // Call your save function here
-      },
+    // Optional: Add a listener to check if the editor is ready
+    editor.on('load', () => {
+      console.log('GrapesJS editor loaded');
     });
-
   }, []);
 
   return (
-    <div className='bg-white text-black'>
-      <h1 className="text-center text-2xl font-bold mb-4">UI Builder</h1>
-      <div id="gjs" className="border border-gray-300" />
-      <button 
-        className="mt-4 p-2 bg-blue-500 text-white rounded"
-        onClick={() => editor.runCommand('save-design')}
-      >
-        Save Design
-      </button>
+    <div id="gjs" style={{ height: '100vh', border: '1px solid #ccc' }}>
+      {/* GrapesJS editor will be rendered here */}
     </div>
-  );
-};
+  )
+}
 
-export default Builder;
+export default page

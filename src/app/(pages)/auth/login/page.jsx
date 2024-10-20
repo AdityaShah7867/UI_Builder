@@ -18,12 +18,13 @@ const Page = () => {
     });
     const data = await response.json();
     if (response.ok) {
-      localStorage.setItem('token', data.token); // Save token to local storage
-      router.push('/home'); // Redirect to dashboard
-        toast.success("login successful");
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('userId', data.user._id);
+      localStorage.setItem('userEmail', data.user.email);
+      router.push('/builder');
+      toast.success("Login successful");
     } else {
-      // Handle error (e.g., show error message)
-        toast.error(data.message);
+      toast.error(data.message);
     }
     console.log(data);
   };

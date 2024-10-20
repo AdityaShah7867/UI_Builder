@@ -1,118 +1,199 @@
 'use client';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import grapesjs from 'grapesjs';
 import gjsBlocksBasic from 'grapesjs-blocks-basic';
 import 'grapesjs/dist/css/grapes.min.css';
+import { saveToContentstack } from '@/app/utils/contentstackHelper';
 
 const Builder = () => {
   const editorRef = useRef(null);
+  const [content, setContent] = useState('');
+  const [css, setCss] = useState('');
+  const [buttonText, setButtonText] = useState('Click Me');
+  const [buttonColor, setButtonColor] = useState('#007bff');
 
   useEffect(() => {
     const editor = grapesjs.init({
       container: '#gjs',
-      height: '600px',
+      height: '100vh',
       width: '100%',
       storageManager: false,
       plugins: [gjsBlocksBasic],
-      blockManager: {
-        appendTo: '#blocks-manager',
-      },
-      layerManager: {
-        appendTo: '.layers-container',
-      },
-      panels: {
-        defaults: [
-          {
-            id: 'panel-devices',
-            el: '.panel__devices',
-            buttons: [
-              { id: 'device-desktop', label: 'Desktop', command: 'set-device-desktop', active: true, togglable: false },
-              { id: 'device-tablet', label: 'Tablet', command: 'set-device-tablet', togglable: false },
-              { id: 'device-mobile', label: 'Mobile', command: 'set-device-mobile', togglable: false },
-            ],
-          },
-          {
-            id: 'panel-options',
-            el: '.panel__options',
-            buttons: [
-              { id: 'undo', className: 'fa fa-undo', command: 'undo' },
-              { id: 'redo', className: 'fa fa-repeat', command: 'redo' },
-              { id: 'export', className: 'fa fa-code', command: 'export-template' },
-              { id: 'preview', className: 'fa fa-eye', command: 'preview' },
-            ],
-          },
-        ],
-      },
       styleManager: {
         sectors: [
-          {
-            name: 'General',
-            open: true,
-            properties: [
-              { name: 'Width', property: 'width', type: 'length' },
-              { name: 'Height', property: 'height', type: 'length' },
-              { name: 'Background Color', property: 'background-color', type: 'color' },
-              { name: 'Margin', property: 'margin', type: 'length' },
-              { name: 'Padding', property: 'padding', type: 'length' },
-              {
-                name: 'Border',
-                property: 'border',
-                type: 'composite',
-                units: ['px', 'em', 'rem'],
-                properties: [
-                  { name: 'Width', property: 'border-width', type: 'length' },
-                  { name: 'Style', property: 'border-style', type: 'select', options: [
-                      { value: 'none', name: 'None' },
-                      { value: 'solid', name: 'Solid' },
-                      { value: 'dashed', name: 'Dashed' },
-                      { value: 'dotted', name: 'Dotted' },
-                    ] 
-                  },
-                  { name: 'Color', property: 'border-color', type: 'color' },
-                ],
-              },
-            ],
-          },
           {
             name: 'Typography',
             open: true,
             properties: [
-              { name: 'Font Size', property: 'font-size', type: 'select', options: [
-                  { value: '12px', name: '12px' },
-                  { value: '14px', name: '14px' },
-                  { value: '16px', name: '16px' },
-                  { value: '20px', name: '20px' },
-                  { value: '24px', name: '24px' },
-                ]
+              { 
+                name: 'Font Size', 
+                property: 'font-size', 
+                type: 'number',
+                units: ['px', 'em', 'rem', '%'],
+                min: 1,
+                max: 100,
+                step: 1
               },
-              { name: 'Font Family', property: 'font-family', type: 'select', options: [
-                  { value: 'Arial, sans-serif', name: 'Arial' },
-                  { value: 'Georgia, serif', name: 'Georgia' },
-                  { value: 'Courier New, monospace', name: 'Courier' },
-                  { value: 'Times New Roman, serif', name: 'Times' },
-                ]
-              },
-              { name: 'Text Color', property: 'color', type: 'color' },
+              { name: 'Font Color', property: 'color', type: 'color' },
               { name: 'Background Color', property: 'background-color', type: 'color' },
-              { name: 'Bold', property: 'font-weight', type: 'select', options: [
+              { name: 'Font Weight', property: 'font-weight', type: 'select', options: [
                   { value: 'normal', name: 'Normal' },
                   { value: 'bold', name: 'Bold' },
+                  { value: 'bolder', name: 'Bolder' },
+                  { value: 'lighter', name: 'Lighter' },
                 ]
               },
+              { name: 'Text Shadow', property: 'text-shadow', type: 'text', placeholder: '0 0 5px #000' },
               { name: 'Text Align', property: 'text-align', type: 'select', options: [
                   { value: 'left', name: 'Left' },
                   { value: 'center', name: 'Center' },
                   { value: 'right', name: 'Right' },
                 ]
               },
+              { name: 'Margin', property: 'margin', type: 'text', placeholder: '0 auto' },
+              // New properties for images
+              { name: 'Width', property: 'width', type: 'text', placeholder: '100%' },
+              { name: 'Height', property: 'height', type: 'text', placeholder: 'auto' },
+              { name: 'Border', property: 'border', type: 'text', placeholder: '1px solid #000' },
+              { name: 'Border Radius', property: 'border-radius', type: 'text', placeholder: '5px' },
+              { name: 'Box Shadow', property: 'box-shadow', type: 'text', placeholder: '0 4px 8px rgba(0,0,0,0.2)' },
+            ],
+          },
+          // New sector for Image properties
+          {
+            name: 'Image',
+            open: true,
+            properties: [
+              { name: 'Width', property: 'width', type: 'text', placeholder: '100%' },
+              { name: 'Height', property: 'height', type: 'text', placeholder: 'auto' },
+              { name: 'Border', property: 'border', type: 'text', placeholder: '1px solid #000' },
+              { name: 'Border Radius', property: 'border-radius', type: 'text', placeholder: '5px' },
+              { name: 'Box Shadow', property: 'box-shadow', type: 'text', placeholder: '0 4px 8px rgba(0,0,0,0.2)' },
+              { name: 'Text Align', property: 'text-align', type: 'select', options: [
+                  { value: 'left', name: 'Left' },
+                  { value: 'center', name: 'Center' },
+                  { value: 'right', name: 'Right' },
+                ]
+              },
+              { name: 'Margin', property: 'margin', type: 'text', placeholder: '0 auto' },
+              // New property for image alignment
+              { name: 'Image Align', property: 'image-align', type: 'select', options: [
+                  { value: 'left', name: 'Left' },
+                  { value: 'center', name: 'Center' },
+                  { value: 'right', name: 'Right' },
+                ]
+              },
+              { 
+                name: 'Alignment', 
+                property: 'display', 
+                type: 'radio',
+                options: [
+                  { value: 'inline', name: 'Inline' },
+                  { value: 'block', name: 'Block' }
+                ]
+              },
+              { 
+                name: 'Center Image', 
+                property: 'margin', 
+                type: 'radio',
+                options: [
+                  { value: '0', name: 'Left' },
+                  { value: '0 auto', name: 'Center' },
+                  { value: '0 0 0 auto', name: 'Right' }
+                ]
+              },
+            ],
+          },
+          {
+            name: 'Box',
+            open: true,
+            properties: [
+              { name: 'Border', property: 'border', type: 'text', placeholder: '1px solid #000' },
+              { name: 'Border Radius', property: 'border-radius', type: 'text', placeholder: '5px' },
+              { name: 'Box Shadow', property: 'box-shadow', type: 'text', placeholder: '0 4px 8px rgba(0,0,0,0.2)' },
+            ],
+          },
+          {
+            name: 'Layout',
+            open: true,
+            properties: [
+              { 
+                name: 'Display', 
+                property: 'display', 
+                type: 'select',
+                options: [
+                  { value: 'block', name: 'Block' },
+                  { value: 'inline', name: 'Inline' },
+                  { value: 'inline-block', name: 'Inline Block' },
+                  { value: 'flex', name: 'Flex' },
+                ]
+              },
+              { 
+                name: 'Flex Direction', 
+                property: 'flex-direction', 
+                type: 'radio',
+                options: [
+                  { value: 'row', name: 'Row' },
+                  { value: 'column', name: 'Column' }
+                ]
+              },
+              { 
+                name: 'Justify Content', 
+                property: 'justify-content', 
+                type: 'select',
+                options: [
+                  { value: 'flex-start', name: 'Start' },
+                  { value: 'center', name: 'Center' },
+                  { value: 'flex-end', name: 'End' },
+                  { value: 'space-between', name: 'Space Between' },
+                  { value: 'space-around', name: 'Space Around' }
+                ]
+              },
+              { 
+                name: 'Align Items', 
+                property: 'align-items', 
+                type: 'select',
+                options: [
+                  { value: 'flex-start', name: 'Start' },
+                  { value: 'center', name: 'Center' },
+                  { value: 'flex-end', name: 'End' },
+                  { value: 'stretch', name: 'Stretch' }
+                ]
+              },
             ],
           },
         ],
       },
-      selectorManager: { appendTo: '.styles-container' },
-      traitManager: {
-        appendTo: '.traits-container',
-      },
+    });
+
+    // Add custom button block with link
+    editor.BlockManager.add('custom-button', {
+      label: 'Custom Button',
+      content: `<a href="#" class="dynamic-link" style="padding: 10px; background-color: ${buttonColor}; color: #fff; text-decoration: none; border: none; border-radius: 5px;">${buttonText}</a>`,
+      category: 'Basic',
+    });
+
+    // Update the image alignment handling
+    editor.on('component:update', (model) => {
+      if (model.get('type') === 'image') {
+        const imageAlign = model.getStyle()['image-align'];
+        if (imageAlign) {
+          let styles = { display: 'block' };
+          switch (imageAlign) {
+            case 'left':
+              styles.marginRight = 'auto';
+              break;
+            case 'center':
+              styles.marginLeft = 'auto';
+              styles.marginRight = 'auto';
+              break;
+            case 'right':
+              styles.marginLeft = 'auto';
+              break;
+          }
+          model.setStyle(styles);
+        }
+      }
     });
 
     editorRef.current = editor;
@@ -122,32 +203,60 @@ const Builder = () => {
     };
   }, []);
 
+  const saveContent = () => {
+    const htmlContent = editorRef.current.getHtml();
+    const userId = localStorage.getItem('userId'); // Replace with actual user ID retrieval logic
+    setContent(htmlContent);
+    console.log('HTML Content:', htmlContent);
+    const contentTypeUid = 'home';
+    
+    // Save to Contentstack using the helper function
+    saveToContentstack(htmlContent, userId, contentTypeUid)
+      .then(() => {
+        console.log('Content saved successfully.');
+      })
+      .catch((error) => {
+        console.error('Error saving content:', error);
+      });
+  };
+
+  const setButtonLink = (editor) => {
+    const selected = editor.getSelected();
+    if (selected && selected.is('link')) {
+      const url = prompt('Enter the URL for the button:', 'https://example.com');
+      if (url) {
+        try {
+          new URL(url); // Validate URL
+          selected.set('attributes', { href: url, target: '_blank' });
+        } catch {
+          alert('Please enter a valid URL.');
+        }
+      }
+    } else {
+      alert('Please select a button first.');
+    }
+  };
+
   return (
-    <div className="editor-wrap" style={{ display: 'flex', height: '100vh', fontFamily: 'Arial, sans-serif', backgroundColor: '#f0f0f0' }}>
-      <div className="panel__left" style={{ width: '240px', backgroundColor: '#333', color: '#fff' }}>
-        <div className="layers-container" style={{ padding: '15px' }}>
-          <h3 style={{ margin: '0 0 10px', fontSize: '16px', fontWeight: 'bold' }}>Layers</h3>
-        </div>
-        <div id="blocks-manager" style={{ padding: '15px' }}>
-          <h3 style={{ margin: '0 0 10px', fontSize: '16px', fontWeight: 'bold' }}>Blocks</h3>
-        </div>
-      </div>
-      <div className="editor-content" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <div className="panel__top" style={{ padding: '10px', backgroundColor: '#444', color: '#fff', display: 'flex', justifyContent: 'space-between' }}>
-          <div className="panel__devices"></div>
-          <div className="panel__options"></div>
-        </div>
-        <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px' }}>
-          <div id="gjs" style={{ width: '100%', height: '100%', border: '1px solid #ddd', backgroundColor: '#fff' }}></div>
-        </div>
-      </div>
-      <div className="panel__right" style={{ width: '240px', backgroundColor: '#333', color: '#fff' }}>
-        <div className="styles-container" style={{ padding: '15px' }}>
-          <h3 style={{ margin: '0 0 10px', fontSize: '16px', fontWeight: 'bold' }}>Styles</h3>
-        </div>
-        <div className="traits-container" style={{ padding: '15px' }}>
-          <h3 style={{ margin: '0 0 10px', fontSize: '16px', fontWeight: 'bold' }}>Properties</h3>
-        </div>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#f4f4f4' }}>
+      <header style={{ padding: '10px', backgroundColor: '#007bff', color: '#fff', textAlign: 'center' }}>
+        <h1 style={{ margin: 0 }}>UI Builder</h1>
+      </header>
+     
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <button 
+          onClick={saveContent} 
+          className="btn btn-success bg-green-500 text-white"
+        >
+          Save Content
+        </button>
+        <button 
+          onClick={() => setButtonLink(editorRef.current)} 
+          className="btn btn-primary bg-blue-500 text-white"
+        >
+          Set Button Link
+        </button>
+        <div id="gjs" style={{ flex: 1, border: '1px solid #ccc', backgroundColor: '#fff' }}></div>
       </div>
     </div>
   );
