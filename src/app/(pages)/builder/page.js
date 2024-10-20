@@ -205,13 +205,16 @@ const Builder = () => {
 
   const saveContent = () => {
     const htmlContent = editorRef.current.getHtml();
+    const cssContent = editorRef.current.getCss(); // Get the CSS content
     const userId = localStorage.getItem('userId'); // Replace with actual user ID retrieval logic
     setContent(htmlContent);
+    setCss(cssContent); // Store the CSS content in state if needed
     console.log('HTML Content:', htmlContent);
+    console.log('CSS Content:', cssContent);
     const contentTypeUid = 'home';
     
     // Save to Contentstack using the helper function
-    saveToContentstack(htmlContent, userId, contentTypeUid)
+    saveToContentstack(htmlContent, cssContent, userId, contentTypeUid) // Pass CSS content
       .then(() => {
         console.log('Content saved successfully.');
       })
