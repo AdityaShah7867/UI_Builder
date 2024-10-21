@@ -6,6 +6,7 @@ import 'grapesjs/dist/css/grapes.min.css';
 import { saveToContentstack } from '@/app/utils/contentstackHelper';
 import toast, { Toaster } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 const Builder = () => {
   const editorRef = useRef(null);
@@ -15,6 +16,11 @@ const Builder = () => {
   const [buttonColor, setButtonColor] = useState('#007bff');
   const [pageRef, setPageRef] = useState(''); // New state for pageref
 const router = useRouter();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const modalRef = useRef(null);
+
   useEffect(() => {
     // Extract pageref from URL
     const params = new URLSearchParams(window.location.search);
@@ -183,6 +189,8 @@ const router = useRouter();
         },
       },
     });
+
+    editorRef.current = editor;
 
     // Add custom button block with link
     editor.BlockManager.add('custom-button', {
@@ -681,24 +689,76 @@ const router = useRouter();
     });
 
     // Add this after your GrapesJS initialization
-    editor.on('load', () => {
-      const fontManager = editor.FontManager;
+    // editor.on('load', () => {
+    //   const fontManager = editor.FontManager;
       
-      // Add Google Fonts
-      fontManager.add('Google Fonts', [
-        { name: 'Open Sans', value: '"Open Sans", sans-serif' },
-        { name: 'Roboto', value: 'Roboto, sans-serif' },
-        { name: 'Lato', value: 'Lato, sans-serif' },
-        // Add more Google Fonts as needed
-      ]);
+    //   // Add Google Fonts
+    //   fontManager.add('Google Fonts', [
+    //     { name: 'Open Sans', value: '"Open Sans", sans-serif' },
+    //     { name: 'Roboto', value: 'Roboto, sans-serif' },
+    //     { name: 'Lato', value: 'Lato, sans-serif' },
+    //     // Add more Google Fonts as needed
+    //   ]);
+    // });
+
+    // Add AI Prompt button
+    editor.Panels.addButton('options', {
+      id: 'ai-prompt',
+      className: 'fa fa-magic',
+      command: 'open-ai-prompt',
+      attributes: { title: 'AI Prompt' },
     });
 
-    editorRef.current = editor;
+    editor.Commands.add('open-ai-prompt', {
+      run: () => setIsModalOpen(true)
+    });
+
+    // editorRef.current = editor;
 
     return () => {
       editor.destroy();
     };
   }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setIsModalOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleAiPrompt = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.post('/api/generate-component', { prompt: aiPrompt });
+      let generatedHtml = response.data.html;
+      
+      // Remove markdown formatting and backticks
+      generatedHtml = generatedHtml.replace(/```html\n|\n```/g, '').trim();
+      
+      if (editorRef.current) {
+        // Create a new component based on the AI response
+        editorRef.current.addComponents(generatedHtml);
+        
+        setIsModalOpen(false);
+        setAiPrompt('');
+        toast.success('Component generated successfully!');
+      } else {
+        throw new Error('Editor instance not available');
+      }
+    } catch (error) {
+      console.error('Error processing AI prompt:', error);
+      toast.error('Failed to process AI prompt');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const saveContent = () => {
     const htmlContent = editorRef.current.getHtml();
@@ -758,6 +818,36 @@ const router = useRouter();
           <div id="gjs" className="h-full border border-gray-300 rounded-lg shadow-lg bg-white"></div>
         </div>
       </div>
+      
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div ref={modalRef} className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h2 className="text-xl font-semibold mb-4">AI Prompt</h2>
+            <textarea
+              value={aiPrompt}
+              onChange={(e) => setAiPrompt(e.target.value)}
+              className="w-full h-32 p-2 border border-gray-300 rounded-md mb-4 resize-none"
+              placeholder="Describe the component you want to create..."
+            />
+            <div className="flex justify-end">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="px-4 py-2 mr-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition duration-300"
+                disabled={isLoading}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAiPrompt}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300 disabled:bg-blue-400"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Generating...' : 'Generate'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
