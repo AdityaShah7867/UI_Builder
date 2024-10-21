@@ -13,7 +13,7 @@ export default function Home() {
             <div>
               {/* <a href="#" className="text-gray-600 hover:text-gray-800 px-3 py-2">Features</a>
               <a href="#" className="text-gray-600 hover:text-gray-800 px-3 py-2">Pricing</a> */}
-              <a onClick={() => router.push('/auth/login')} className="bg-blue-500 text-white px-4 py-2 rounded-md ml-4">Get Started</a>
+              <a onClick={() => router.push('/auth/login')} className="bg-blue-500 text-white px-4 py-2 rounded-md ml-4 cursor-pointer">Get Started</a>
             </div>
           </div>
         </nav>
