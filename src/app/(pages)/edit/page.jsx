@@ -7,7 +7,7 @@ import { saveToContentstack } from '@/app/utils/contentstackHelper';
 import toast, { Toaster } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 
-const Builder = () => {
+const Edit = () => {
   const editorRef = useRef(null);
   const [content, setContent] = useState('');
   const [css, setCss] = useState('');
@@ -280,4 +280,4 @@ const router = useRouter();
   );
 };
 
-export default Builder;
+export default Edit;

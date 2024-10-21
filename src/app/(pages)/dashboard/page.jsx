@@ -44,7 +44,7 @@ const DashboardPage = () => {
 
       <div className="grid grid-cols-2 gap-6">
         {sections.map((section) => {
-          const sectionContent = contents.filter(content => content.contentType.toLowerCase() === section.toLowerCase().replace(' ', '-'));
+          const sectionContent = contents.filter(content => content.contentType.toLowerCase() === section.toLowerCase().replace(' ', '_'));
           return (
             <div key={section} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
               <h2 className="text-xl font-medium">{section}</h2>
@@ -59,7 +59,7 @@ const DashboardPage = () => {
                         <Link href={`/builder/edit?${section.toLowerCase().replace(' ', '-')}`}>
                           <button className="text-blue-500 hover:underline">Edit</button>
                         </Link>
-                        <Link href={`/user/view?uid=${content.uuid}&cssuid=${content.cssUuid}`}>
+                        <Link href={`/user/view?uid=${content.uuid}&cssuid=${content.cssUuid}&pageref=${section.toLowerCase().replace(' ', '_')}`}>
                           <button className="ml-2 text-blue-500 hover:underline">View</button>
                         </Link>
                       </div>
@@ -67,7 +67,7 @@ const DashboardPage = () => {
                   ))}
                 </div>
               ) : (
-                <Link href={`/builder?${section.toLowerCase().replace(' ', '-')}`}>
+                <Link href={`/builder?pageref=${section.toLowerCase().replace(' ', '_')}`}>
                   <button className="mt-4 text-green-500 hover:underline">Create</button>
                 </Link>
               )}

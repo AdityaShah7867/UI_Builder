@@ -20,7 +20,7 @@ export async function POST(req) {
     }
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
+      expiresIn: '1d',
     });
 
     // Create a user object without the password
