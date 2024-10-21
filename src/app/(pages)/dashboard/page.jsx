@@ -56,7 +56,7 @@ const DashboardPage = () => {
                       <div className="text-gray-500">{content.cssUuid}</div>
 
                       <div>
-                        <Link href={`/builder/edit?${section.toLowerCase().replace(' ', '-')}`}>
+                        <Link href={`/edit?uid=${content.uuid}&cssuid=${content.cssUuid}&pageref=${section.toLowerCase().replace(' ', '_')}`}>
                           <button className="text-blue-500 hover:underline">Edit</button>
                         </Link>
                         <Link href={`/user/view?uid=${content.uuid}&cssuid=${content.cssUuid}&pageref=${section.toLowerCase().replace(' ', '_')}`}>

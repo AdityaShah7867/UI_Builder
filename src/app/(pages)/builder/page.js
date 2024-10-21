@@ -62,12 +62,6 @@ const router = useRouter();
                 ]
               },
               { name: 'Margin', property: 'margin', type: 'text', placeholder: '0 auto' },
-              // New properties for images
-              { name: 'Width', property: 'width', type: 'text', placeholder: '100%' },
-              { name: 'Height', property: 'height', type: 'text', placeholder: 'auto' },
-              { name: 'Border', property: 'border', type: 'text', placeholder: '1px solid #000' },
-              { name: 'Border Radius', property: 'border-radius', type: 'text', placeholder: '5px' },
-              { name: 'Box Shadow', property: 'box-shadow', type: 'text', placeholder: '0 4px 8px rgba(0,0,0,0.2)' },
             ],
           },
           // New sector for Image properties
@@ -175,6 +169,19 @@ const router = useRouter();
           },
         ],
       },
+      // Add this to your GrapesJS init configuration
+      assetManager: {
+        upload: 'https://your-upload-endpoint.com',
+        uploadName: 'files',
+        multiUpload: true,
+        assets: [
+          // Your default assets
+        ],
+        uploadFile: (e) => {
+          const files = e.dataTransfer ? e.dataTransfer.files : e.target.files;
+          // ... handle file upload ...
+        },
+      },
     });
 
     // Add custom button block with link
@@ -205,6 +212,485 @@ const router = useRouter();
           model.setStyle(styles);
         }
       }
+    });
+
+    // Add new 3-card layout block with preview
+    editor.BlockManager.add('three-card-layout', {
+      label: '3 Cards with Image',
+      content: `
+        <div style="display: flex; justify-content: space-between; padding: 20px;">
+          <div style="width: 30%; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+            <img src="https://via.placeholder.com/300x200" style="width: 100%; height: 200px; object-fit: cover;">
+            <div style="padding: 15px;">
+              <h3 style="font-size: 18px; margin-bottom: 10px;">Card 1 Title</h3>
+              <p style="font-size: 14px;">Some content for card 1. Replace this with your own text.</p>
+            </div>
+          </div>
+          <div style="width: 30%; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+            <img src="https://via.placeholder.com/300x200" style="width: 100%; height: 200px; object-fit: cover;">
+            <div style="padding: 15px;">
+              <h3 style="font-size: 18px; margin-bottom: 10px;">Card 2 Title</h3>
+              <p style="font-size: 14px;">Some content for card 2. Replace this with your own text.</p>
+            </div>
+          </div>
+          <div style="width: 30%; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+            <img src="https://via.placeholder.com/300x200" style="width: 100%; height: 200px; object-fit: cover;">
+            <div style="padding: 15px;">
+              <h3 style="font-size: 18px; margin-bottom: 10px;">Card 3 Title</h3>
+              <p style="font-size: 14px;">Some content for card 3. Replace this with your own text.</p>
+            </div>
+          </div>
+        </div>
+      `,
+      category: 'Basic',
+      media: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="3" width="6" height="18" rx="1" fill="#ccc"/>
+        <rect x="9" y="3" width="6" height="18" rx="1" fill="#ccc"/>
+        <rect x="17" y="3" width="6" height="18" rx="1" fill="#ccc"/>
+      </svg>`,
+    });
+
+    // Enhanced prebuilt pages
+    editor.BlockManager.add('prebuilt-landing', {
+      label: 'Landing Page',
+      category: 'Prebuilt Pages',
+      content: `
+        <header style="background-color: #f8f9fa; padding: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+            <h1 style="font-size: 24px; color: #333;">Your Company</h1>
+            <nav>
+              <a href="#" style="margin-right: 15px; color: #333; text-decoration: none; font-weight: 500;">Home</a>
+              <a href="#" style="margin-right: 15px; color: #333; text-decoration: none; font-weight: 500;">Features</a>
+              <a href="#" style="margin-right: 15px; color: #333; text-decoration: none; font-weight: 500;">Pricing</a>
+              <a href="#" style="color: #333; text-decoration: none; font-weight: 500;">Contact</a>
+            </nav>
+          </div>
+        </header>
+        <main>
+          <section style="background-color: #e9ecef; padding: 80px 0; text-align: center;">
+            <h2 style="font-size: 48px; color: #333; margin-bottom: 20px; font-weight: 700;">Welcome to Your Company</h2>
+            <p style="font-size: 20px; color: #666; max-width: 600px; margin: 0 auto 30px;">We provide innovative solutions for your business needs. Discover how we can help you grow.</p>
+            <a href="#" style="display: inline-block; background-color: #007bff; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: 600; transition: background-color 0.3s;">Learn More</a>
+          </section>
+          <section style="padding: 80px 0; background-color: #fff;">
+            <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between;">
+              <div style="flex: 1; padding: 0 20px; text-align: center;">
+                <img src="https://via.placeholder.com/150" style="width: 80px; height: 80px; margin-bottom: 20px;">
+                <h3 style="font-size: 24px; color: #333; margin-bottom: 15px;">Feature 1</h3>
+                <p style="color: #666;">Description of feature 1 goes here. Highlight the benefits for your customers.</p>
+              </div>
+              <div style="flex: 1; padding: 0 20px; text-align: center;">
+                <img src="https://via.placeholder.com/150" style="width: 80px; height: 80px; margin-bottom: 20px;">
+                <h3 style="font-size: 24px; color: #333; margin-bottom: 15px;">Feature 2</h3>
+                <p style="color: #666;">Description of feature 2 goes here. Explain how it solves a problem for users.</p>
+              </div>
+              <div style="flex: 1; padding: 0 20px; text-align: center;">
+                <img src="https://via.placeholder.com/150" style="width: 80px; height: 80px; margin-bottom: 20px;">
+                <h3 style="font-size: 24px; color: #333; margin-bottom: 15px;">Feature 3</h3>
+                <p style="color: #666;">Description of feature 3 goes here. Emphasize its unique selling points.</p>
+              </div>
+            </div>
+          </section>
+          <section style="background-color: #f8f9fa; padding: 80px 0; text-align: center;">
+            <h2 style="font-size: 36px; color: #333; margin-bottom: 40px;">What Our Clients Say</h2>
+            <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between;">
+              <div style="flex: 1; padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 0 15px;">
+                <p style="color: #666; font-style: italic;">"Your Company has transformed our business. Their innovative solutions have helped us increase productivity and reduce costs."</p>
+                <p style="color: #333; font-weight: 600; margin-top: 20px;">- John Doe, CEO of Client Co.</p>
+              </div>
+              <div style="flex: 1; padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 0 15px;">
+                <p style="color: #666; font-style: italic;">"We've seen remarkable growth since partnering with Your Company. Their team is responsive, knowledgeable, and always goes the extra mile."</p>
+                <p style="color: #333; font-weight: 600; margin-top: 20px;">- Jane Smith, CTO of Tech Inc.</p>
+              </div>
+            </div>
+          </section>
+        </main>
+        <footer style="background-color: #343a40; color: #fff; padding: 40px 0;">
+          <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between;">
+            <div style="flex: 1;">
+              <h3 style="font-size: 18px; margin-bottom: 20px;">Your Company</h3>
+              <p style="font-size: 14px;">Providing innovative solutions since 2023.</p>
+            </div>
+            <div style="flex: 1;">
+              <h3 style="font-size: 18px; margin-bottom: 20px;">Quick Links</h3>
+              <ul style="list-style-type: none; padding: 0;">
+                <li><a href="#" style="color: #fff; text-decoration: none; font-size: 14px;">Home</a></li>
+                <li><a href="#" style="color: #fff; text-decoration: none; font-size: 14px;">About</a></li>
+                <li><a href="#" style="color: #fff; text-decoration: none; font-size: 14px;">Services</a></li>
+                <li><a href="#" style="color: #fff; text-decoration: none; font-size: 14px;">Contact</a></li>
+              </ul>
+            </div>
+            <div style="flex: 1;">
+              <h3 style="font-size: 18px; margin-bottom: 20px;">Contact Us</h3>
+              <p style="font-size: 14px;">123 Main St, City, Country</p>
+              <p style="font-size: 14px;">Phone: (123) 456-7890</p>
+              <p style="font-size: 14px;">Email: info@yourcompany.com</p>
+            </div>
+          </div>
+          <div style="text-align: center; margin-top: 40px; font-size: 14px;">
+            <p>&copy; 2023 Your Company. All rights reserved.</p>
+          </div>
+        </footer>
+      `,
+      media: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <rect width="24" height="24" fill="#f8f9fa"/>
+        <rect y="2" width="24" height="4" fill="#343a40"/>
+        <rect y="18" width="24" height="4" fill="#343a40"/>
+        <rect x="2" y="8" width="20" height="8" fill="#e9ecef"/>
+      </svg>`,
+    });
+
+    editor.BlockManager.add('prebuilt-about', {
+      label: 'About Us Page',
+      category: 'Prebuilt Pages',
+      content: `
+        <header style="background-color: #f8f9fa; padding: 20px 0;">
+          <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+            <h1 style="font-size: 24px; color: #333;">Your Company</h1>
+            <nav>
+              <a href="#" style="margin-right: 15px; color: #333; text-decoration: none;">Home</a>
+              <a href="#" style="margin-right: 15px; color: #333; text-decoration: none;">About</a>
+              <a href="#" style="margin-right: 15px; color: #333; text-decoration: none;">Services</a>
+              <a href="#" style="color: #333; text-decoration: none;">Contact</a>
+            </nav>
+          </div>
+        </header>
+        <main>
+          <section style="background-color: #e9ecef; padding: 60px 0; text-align: center;">
+            <h2 style="font-size: 36px; color: #333; margin-bottom: 20px;">About Us</h2>
+            <p style="font-size: 18px; color: #666; max-width: 800px; margin: 0 auto;">We are a dedicated team of professionals committed to delivering excellence in everything we do.</p>
+          </section>
+          <section style="padding: 60px 0;">
+            <div style="max-width: 1200px; margin: 0 auto;">
+              <h3 style="font-size: 24px; color: #333; margin-bottom: 20px;">Our Story</h3>
+              <p style="color: #666; margin-bottom: 20px;">Founded in [year], Your Company has been at the forefront of innovation in [your industry]. Our journey began with a simple idea: [your founding principle or mission].</p>
+              <h3 style="font-size: 24px; color: #333; margin-bottom: 20px;">Our Mission</h3>
+              <p style="color: #666; margin-bottom: 20px;">At Your Company, our mission is to [your mission statement]. We strive to [your goals or objectives].</p>
+              <h3 style="font-size: 24px; color: #333; margin-bottom: 20px;">Our Team</h3>
+              <p style="color: #666;">Our diverse team of experts brings a wealth of experience and knowledge to every project. We're united by our passion for [your field] and our commitment to client success.</p>
+            </div>
+          </section>
+        </main>
+        <footer style="background-color: #343a40; color: #fff; padding: 20px 0; text-align: center;">
+          <p>&copy; 2023 Your Company. All rights reserved.</p>
+        </footer>
+      `,
+      media: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <rect width="24" height="24" fill="#f8f9fa"/>
+        <rect y="2" width="24" height="4" fill="#343a40"/>
+        <rect y="18" width="24" height="4" fill="#343a40"/>
+        <circle cx="12" cy="9" r="3" fill="#e9ecef"/>
+        <rect x="4" y="13" width="16" height="3" fill="#e9ecef"/>
+      </svg>`,
+    });
+
+    editor.BlockManager.add('prebuilt-services', {
+      label: 'Services Page',
+      category: 'Prebuilt Pages',
+      content: `
+        <header style="background-color: #f8f9fa; padding: 20px 0;">
+          <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+            <h1 style="font-size: 24px; color: #333;">Your Company</h1>
+            <nav>
+              <a href="#" style="margin-right: 15px; color: #333; text-decoration: none;">Home</a>
+              <a href="#" style="margin-right: 15px; color: #333; text-decoration: none;">About</a>
+              <a href="#" style="margin-right: 15px; color: #333; text-decoration: none;">Services</a>
+              <a href="#" style="color: #333; text-decoration: none;">Contact</a>
+            </nav>
+          </div>
+        </header>
+        <main>
+          <section style="background-color: #e9ecef; padding: 60px 0; text-align: center;">
+            <h2 style="font-size: 36px; color: #333; margin-bottom: 20px;">Our Services</h2>
+            <p style="font-size: 18px; color: #666; max-width: 800px; margin: 0 auto;">Discover the range of professional services we offer to meet your needs.</p>
+          </section>
+          <section style="padding: 60px 0;">
+            <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between;">
+              <div style="width: 30%; margin-bottom: 30px;">
+                <h3 style="font-size: 24px; color: #333; margin-bottom: 15px;">Service 1</h3>
+                <p style="color: #666;">Description of service 1 goes here. Explain the benefits and features of this service.</p>
+              </div>
+              <div style="width: 30%; margin-bottom: 30px;">
+                <h3 style="font-size: 24px; color: #333; margin-bottom: 15px;">Service 2</h3>
+                <p style="color: #666;">Description of service 2 goes here. Explain the benefits and features of this service.</p>
+              </div>
+              <div style="width: 30%; margin-bottom: 30px;">
+                <h3 style="font-size: 24px; color: #333; margin-bottom: 15px;">Service 3</h3>
+                <p style="color: #666;">Description of service 3 goes here. Explain the benefits and features of this service.</p>
+              </div>
+              <div style="width: 30%; margin-bottom: 30px;">
+                <h3 style="font-size: 24px; color: #333; margin-bottom: 15px;">Service 4</h3>
+                <p style="color: #666;">Description of service 4 goes here. Explain the benefits and features of this service.</p>
+              </div>
+              <div style="width: 30%; margin-bottom: 30px;">
+                <h3 style="font-size: 24px; color: #333; margin-bottom: 15px;">Service 5</h3>
+                <p style="color: #666;">Description of service 5 goes here. Explain the benefits and features of this service.</p>
+              </div>
+              <div style="width: 30%; margin-bottom: 30px;">
+                <h3 style="font-size: 24px; color: #333; margin-bottom: 15px;">Service 6</h3>
+                <p style="color: #666;">Description of service 6 goes here. Explain the benefits and features of this service.</p>
+              </div>
+            </div>
+          </section>
+        </main>
+        <footer style="background-color: #343a40; color: #fff; padding: 20px 0; text-align: center;">
+          <p>&copy; 2023 Your Company. All rights reserved.</p>
+        </footer>
+      `,
+      media: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <rect width="24" height="24" fill="#f8f9fa"/>
+        <rect y="2" width="24" height="4" fill="#343a40"/>
+        <rect y="18" width="24" height="4" fill="#343a40"/>
+        <rect x="2" y="8" width="6" height="8" fill="#e9ecef"/>
+        <rect x="10" y="8" width="6" height="8" fill="#e9ecef"/>
+        <rect x="18" y="8" width="6" height="8" fill="#e9ecef"/>
+      </svg>`,
+    });
+
+    editor.BlockManager.add('prebuilt-contact', {
+      label: 'Contact Page',
+      category: 'Prebuilt Pages',
+      content: `
+        <header style="background-color: #f8f9fa; padding: 20px 0;">
+          <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+            <h1 style="font-size: 24px; color: #333;">Your Company</h1>
+            <nav>
+              <a href="#" style="margin-right: 15px; color: #333; text-decoration: none;">Home</a>
+              <a href="#" style="margin-right: 15px; color: #333; text-decoration: none;">About</a>
+              <a href="#" style="margin-right: 15px; color: #333; text-decoration: none;">Services</a>
+              <a href="#" style="color: #333; text-decoration: none;">Contact</a>
+            </nav>
+          </div>
+        </header>
+        <main>
+          <section style="background-color: #e9ecef; padding: 60px 0; text-align: center;">
+            <h2 style="font-size: 36px; color: #333; margin-bottom: 20px;">Contact Us</h2>
+            <p style="font-size: 18px; color: #666; max-width: 800px; margin: 0 auto;">We'd love to hear from you. Get in touch with us for any inquiries or support.</p>
+          </section>
+          <section style="padding: 60px 0;">
+            <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between;">
+              <div style="width: 48%;">
+                <h3 style="font-size: 24px; color: #333; margin-bottom: 20px;">Contact Information</h3>
+                <p style="color: #666; margin-bottom: 10px;"><strong>Address:</strong> 123 Main St, City, Country</p>
+                <p style="color: #666; margin-bottom: 10px;"><strong>Phone:</strong> +1 (123) 456-7890</p>
+                <p style="color: #666; margin-bottom: 10px;"><strong>Email:</strong> info@yourcompany.com</p>
+                <p style="color: #666; margin-bottom: 10px;"><strong>Hours:</strong> Monday - Friday, 9am - 5pm</p>
+              </div>
+              <div style="width: 48%;">
+                <h3 style="font-size: 24px; color: #333; margin-bottom: 20px;">Send us a Message</h3>
+                <form>
+                  <div style="margin-bottom: 15px;">
+                    <label for="name" style="display: block; margin-bottom: 5px; color: #333;">Name:</label>
+                    <input type="text" id="name" name="name" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                  </div>
+                  <div style="margin-bottom: 15px;">
+                    <label for="email" style="display: block; margin-bottom: 5px; color: #333;">Email:</label>
+                    <input type="email" id="email" name="email" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                  </div>
+                  <div style="margin-bottom: 15px;">
+                    <label for="message" style="display: block; margin-bottom: 5px; color: #333;">Message:</label>
+                    <textarea id="message" name="message" rows="4" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
+                  </div>
+                  <button type="submit" style="background-color: #007bff; color: #fff; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">Send Message</button>
+                </form>
+              </div>
+            </div>
+          </section>
+        </main>
+        <footer style="background-color: #343a40; color: #fff; padding: 20px 0; text-align: center;">
+          <p>&copy; 2023 Your Company. All rights reserved.</p>
+        </footer>
+      `,
+      media: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <rect width="24" height="24" fill="#f8f9fa"/>
+        <rect y="2" width="24" height="4" fill="#343a40"/>
+        <rect y="18" width="24" height="4" fill="#343a40"/>
+        <rect x="2" y="8" width="10" height="8" fill="#e9ecef"/>
+        <rect x="14" y="8" width="8" height="8" fill="#e9ecef"/>
+      </svg>`,
+    });
+
+    // Add this to your existing useEffect hook
+    editor.Panels.addButton('options', {
+      id: 'device-desktop',
+      label: 'Desktop',
+      command: 'set-device-desktop',
+      active: true,
+    });
+
+    editor.Panels.addButton('options', {
+      id: 'device-tablet',
+      label: 'Tablet',
+      command: 'set-device-tablet',
+    });
+
+    editor.Panels.addButton('options', {
+      id: 'device-mobile',
+      label: 'Mobile',
+      command: 'set-device-mobile',
+    });
+
+    editor.Commands.add('set-device-desktop', {
+      run: editor => editor.setDevice('Desktop')
+    });
+
+    editor.Commands.add('set-device-tablet', {
+      run: editor => editor.setDevice('Tablet')
+    });
+
+    editor.Commands.add('set-device-mobile', {
+      run: editor => editor.setDevice('Mobile')
+    });
+
+    // Add this to your existing useEffect hook
+    editor.DomComponents.addType('custom-card', {
+      isComponent: el => el.tagName === 'DIV' && el.classList.contains('custom-card'),
+      model: {
+        defaults: {
+          traits: [
+            {
+              type: 'text',
+              name: 'title',
+              label: 'Card Title',
+            },
+            {
+              type: 'text',
+              name: 'content',
+              label: 'Card Content',
+            },
+          ],
+        },
+      },
+      view: {
+        init() {
+          this.listenTo(this.model, 'change:attributes', this.updateContent);
+        },
+        updateContent() {
+          const title = this.model.get('attributes').title || 'Card Title';
+          const content = this.model.get('attributes').content || 'Card Content';
+          this.el.innerHTML = `
+            <div class="card">
+              <h3>${title}</h3>
+              <p>${content}</p>
+            </div>
+          `;
+        },
+      },
+    });
+
+    editor.BlockManager.add('custom-card', {
+      label: 'Custom Card',
+      content: {
+        type: 'custom-card',
+        attributes: { class: 'custom-card' },
+      },
+    });
+
+    // Add this to your existing useEffect hook
+    editor.Panels.addButton('options', {
+      id: 'open-code',
+      className: 'fa fa-code',
+      command: 'open-code',
+      attributes: { title: 'Open Code' },
+    });
+
+    editor.Commands.add('open-code', {
+      run: editor => editor.CodeManager.getViewer('CodeMirror').setContent(editor.getHtml())
+    });
+
+    // Add this to your existing useEffect hook
+    editor.Panels.addButton('options', {
+      id: 'undo',
+      className: 'fa fa-undo',
+      command: 'undo',
+      attributes: { title: 'Undo' },
+    });
+
+    editor.Panels.addButton('options', {
+      id: 'redo',
+      className: 'fa fa-repeat',
+      command: 'redo',
+      attributes: { title: 'Redo' },
+    });
+
+    // Add this to your existing useEffect hook
+    editor.BlockManager.add('custom-block-category', {
+      label: 'Custom Blocks',
+      category: 'Custom',
+      content: '<div>Your custom block content</div>',
+    });
+
+    // Add these functions to your component
+    const saveTemplate = () => {
+      const template = editor.getProjectData();
+      // Save template to your backend or local storage
+    };
+
+    const loadTemplate = (templateData) => {
+      editor.loadProjectData(templateData);
+    };
+
+    // Add buttons to the editor panel
+    editor.Panels.addButton('options', {
+      id: 'save-template',
+      className: 'fa fa-save',
+      command: 'save-template',
+      attributes: { title: 'Save Template' },
+    });
+
+    editor.Commands.add('save-template', {
+      run: saveTemplate
+    });
+
+    // Add this to your existing useEffect hook
+    
+
+    // Add these functions to your component
+    const exportHTML = () => {
+      const html = editor.getHtml();
+      const css = editor.getCss();
+      const fullHTML = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <style>${css}</style>
+        </head>
+        <body>${html}</body>
+        </html>
+      `;
+      // Create a Blob and download it
+      const blob = new Blob([fullHTML], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'exported-page.html';
+      a.click();
+    };
+
+    // Add button to the editor panel
+    editor.Panels.addButton('options', {
+      id: 'export-html',
+      className: 'fa fa-download',
+      command: 'export-html',
+      attributes: { title: 'Export HTML' },
+    });
+
+    editor.Commands.add('export-html', {
+      run: exportHTML
+    });
+
+    // Add this after your GrapesJS initialization
+    editor.on('load', () => {
+      const fontManager = editor.FontManager;
+      
+      // Add Google Fonts
+      fontManager.add('Google Fonts', [
+        { name: 'Open Sans', value: '"Open Sans", sans-serif' },
+        { name: 'Roboto', value: 'Roboto, sans-serif' },
+        { name: 'Lato', value: 'Lato, sans-serif' },
+        // Add more Google Fonts as needed
+      ]);
     });
 
     editorRef.current = editor;
@@ -253,29 +739,25 @@ const router = useRouter();
   };
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-100">
       <Toaster />
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#f4f4f4' }}>
-      <header style={{ padding: '10px', backgroundColor: '#007bff', color: '#fff', textAlign: 'center' }}>
-        <h1 style={{ margin: 0 }}>UI Builder</h1>
-      </header>
-     
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <button 
-          onClick={saveContent} 
-          className="btn btn-success bg-green-500 text-white"
-        >
-          Save Content
-        </button>
-        <button 
-          onClick={() => setButtonLink(editorRef.current)} 
-          className="btn btn-primary bg-blue-500 text-white"
-        >
-          Set Button Link
-        </button>
-        <div id="gjs" style={{ flex: 1, border: '1px solid #ccc', backgroundColor: '#fff' }}></div>
+      <div className="flex flex-col h-screen">
+        <header className="bg-white border-b border-gray-200 shadow-sm">
+          <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 className="text-xl font-semibold text-gray-800">UI Builder</h1>
+            <button 
+              onClick={saveContent} 
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+            >
+              Save Content
+            </button>
+          </div>
+        </header>
+        
+        <div className="flex-1 p-4">
+          <div id="gjs" className="h-full border border-gray-300 rounded-lg shadow-lg bg-white"></div>
+        </div>
       </div>
-    </div>
     </div>
   );
 };
