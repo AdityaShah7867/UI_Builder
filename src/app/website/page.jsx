@@ -30,19 +30,32 @@ const Page = () => {
 
   return (
     <div>
-      <nav style={{ backgroundColor: '#f8f9fa', padding: '10px 0' }}>
-        <ul style={{ listStyle: 'none', display: 'flex', justifyContent: 'center', margin: 0, padding: 0 }}>
-          <li style={{ margin: '0 10px' }}><button onClick={() => handleNavClick('home')}>Home</button></li>
-          <li style={{ margin: '0 10px' }}><button onClick={() => handleNavClick('contact')}>Contact</button></li>
-          <li style={{ margin: '0 10px' }}><button onClick={() => handleNavClick('about_us')}>About Us</button></li>
-          <li style={{ margin: '0 10px' }}><button onClick={() => handleNavClick('services')}>Services</button></li>
-        </ul>
+      <nav className="bg-gray-800 shadow-lg">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="flex justify-between">
+            <div className="flex space-x-7">
+              <div className="flex items-center py-4">
+                <span className="font-semibold text-white text-lg">{username}'s Site</span>
+              </div>
+            </div>
+            <div className="hidden md:flex items-center space-x-1">
+              <button onClick={() => handleNavClick('home')} className="py-4 px-2 text-gray-300 hover:text-white transition duration-300">Home</button>
+              <button onClick={() => handleNavClick('contact')} className="py-4 px-2 text-gray-300 hover:text-white transition duration-300">Contact</button>
+              <button onClick={() => handleNavClick('about_us')} className="py-4 px-2 text-gray-300 hover:text-white transition duration-300">About Us</button>
+              <button onClick={() => handleNavClick('services')} className="py-4 px-2 text-gray-300 hover:text-white transition duration-300">Services</button>
+            </div>
+          </div>
+        </div>
       </nav>
       
-      {websiteContent && (
+      {websiteContent ? (
         <div>
           <style dangerouslySetInnerHTML={{ __html: websiteContent.css }} />
           <div dangerouslySetInnerHTML={{ __html: websiteContent.html }} />
+        </div>
+      ) : (
+        <div className="flex justify-center items-center h-64">
+          <p className="text-xl text-gray-600">No content available for this section.</p>
         </div>
       )}
     </div>
