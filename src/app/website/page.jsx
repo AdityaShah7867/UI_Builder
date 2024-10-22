@@ -9,6 +9,7 @@ const PageContent = () => {
   const [username, setUsername] = useState('');
   const [contentType, setContentType] = useState('');
   const [websiteContent, setWebsiteContent] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const usernameParam = searchParams.get('username');
@@ -18,10 +19,19 @@ const PageContent = () => {
 
     // Fetch website content from API
     if (usernameParam && contentTypeParam) {
+      setIsLoading(true);
       fetch(`/api/website?username=${usernameParam}&contentType=${contentTypeParam}`)
         .then(response => response.json())
-        .then(data => setWebsiteContent(data))
-        .catch(error => console.error('Error fetching website content:', error));
+        .then(data => {
+          setWebsiteContent(data);
+          setIsLoading(false);
+        })
+        .catch(error => {
+          console.error('Error fetching website content:', error);
+          setIsLoading(false);
+        });
+    } else {
+      setIsLoading(false);
     }
   }, [searchParams]);
 
@@ -49,7 +59,11 @@ const PageContent = () => {
         </div>
       </nav>
 
-      {websiteContent ? (
+      {isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <p className="text-xl text-gray-600">Loading...</p>
+        </div>
+      ) : websiteContent ? (
         <div>
           <style dangerouslySetInnerHTML={{ __html: websiteContent.css }} />
           <div dangerouslySetInnerHTML={{ __html: websiteContent.html }} />
