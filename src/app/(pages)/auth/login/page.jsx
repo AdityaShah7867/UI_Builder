@@ -22,6 +22,7 @@ const Page = () => {
       localStorage.setItem('token', data.token);
       localStorage.setItem('userId', data.user._id);
       localStorage.setItem('userEmail', data.user.email);
+      localStorage.setItem('username', data.user.username);
       router.push('/dashboard');
       toast.success("Login successful");
     } else {

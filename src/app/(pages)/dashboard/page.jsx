@@ -6,13 +6,16 @@ import { useRouter } from 'next/navigation';
 
 const DashboardPage = () => {
   const [userEmail, setUserEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [contents, setContents] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     const email = localStorage.getItem('userEmail');
+    const storedUsername = localStorage.getItem('username');
     setUserEmail(email || 'Not available');
+    setUsername(storedUsername || 'User');
 
     const fetchData = async () => {
       try {
@@ -58,7 +61,7 @@ const DashboardPage = () => {
             <FaUser className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-lg font-bold">{userEmail.split('@')[0]}</h2>
+            <h2 className="text-lg font-bold">{username}</h2>
             <p className="text-gray-400 text-xs">{userEmail}</p>
           </div>
         </div>
@@ -76,6 +79,11 @@ const DashboardPage = () => {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
+        {/* New Banner */}
+        <div className="bg-blue-600 text-white text-center py-2 px-4">
+          Get your live website at <a href={`http://localhost:3000/website?username=${username}&contentType=home`} className="underline hover:text-blue-200" target="_blank" rel="noopener noreferrer">http://localhost:3000/website?username={username}&contentType=home</a>
+        </div>
+
         {/* Header */}
         <header className="bg-white shadow-md flex justify-between items-center py-4 px-6">
           <div className="flex items-center">

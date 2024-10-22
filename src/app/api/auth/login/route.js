@@ -27,6 +27,7 @@ export async function POST(req) {
     const userWithoutPassword = {
       _id: user._id,
       email: user.email,
+      username: user.username,
       // Add any other user fields you want to include
     };
 

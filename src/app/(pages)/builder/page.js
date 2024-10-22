@@ -263,17 +263,6 @@ const router = useRouter();
       label: 'Landing Page',
       category: 'Prebuilt Pages',
       content: `
-        <header style="background-color: #f8f9fa; padding: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-          <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
-            <h1 style="font-size: 24px; color: #333;">Your Company</h1>
-            <nav>
-              <a href="#" style="margin-right: 15px; color: #333; text-decoration: none; font-weight: 500;">Home</a>
-              <a href="#" style="margin-right: 15px; color: #333; text-decoration: none; font-weight: 500;">Features</a>
-              <a href="#" style="margin-right: 15px; color: #333; text-decoration: none; font-weight: 500;">Pricing</a>
-              <a href="#" style="color: #333; text-decoration: none; font-weight: 500;">Contact</a>
-            </nav>
-          </div>
-        </header>
         <main>
           <section style="background-color: #e9ecef; padding: 80px 0; text-align: center;">
             <h2 style="font-size: 48px; color: #333; margin-bottom: 20px; font-weight: 700;">Welcome to Your Company</h2>
@@ -344,7 +333,9 @@ const router = useRouter();
         <rect width="24" height="24" fill="#f8f9fa"/>
         <rect y="2" width="24" height="4" fill="#343a40"/>
         <rect y="18" width="24" height="4" fill="#343a40"/>
-        <rect x="2" y="8" width="20" height="8" fill="#e9ecef"/>
+        <rect x="2" y="8" width="6" height="8" rx="1" fill="#ccc"/>
+        <rect x="10" y="8" width="6" height="8" rx="1" fill="#ccc"/>
+        <rect x="18" y="8" width="6" height="8" rx="1" fill="#ccc"/>
       </svg>`,
     });
 
@@ -352,17 +343,6 @@ const router = useRouter();
       label: 'About Us Page',
       category: 'Prebuilt Pages',
       content: `
-        <header style="background-color: #f8f9fa; padding: 20px 0;">
-          <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
-            <h1 style="font-size: 24px; color: #333;">Your Company</h1>
-            <nav>
-              <a href="#" style="margin-right: 15px; color: #333; text-decoration: none;">Home</a>
-              <a href="#" style="margin-right: 15px; color: #333; text-decoration: none;">About</a>
-              <a href="#" style="margin-right: 15px; color: #333; text-decoration: none;">Services</a>
-              <a href="#" style="color: #333; text-decoration: none;">Contact</a>
-            </nav>
-          </div>
-        </header>
         <main>
           <section style="background-color: #e9ecef; padding: 60px 0; text-align: center;">
             <h2 style="font-size: 36px; color: #333; margin-bottom: 20px;">About Us</h2>
@@ -396,17 +376,6 @@ const router = useRouter();
       label: 'Services Page',
       category: 'Prebuilt Pages',
       content: `
-        <header style="background-color: #f8f9fa; padding: 20px 0;">
-          <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
-            <h1 style="font-size: 24px; color: #333;">Your Company</h1>
-            <nav>
-              <a href="#" style="margin-right: 15px; color: #333; text-decoration: none;">Home</a>
-              <a href="#" style="margin-right: 15px; color: #333; text-decoration: none;">About</a>
-              <a href="#" style="margin-right: 15px; color: #333; text-decoration: none;">Services</a>
-              <a href="#" style="color: #333; text-decoration: none;">Contact</a>
-            </nav>
-          </div>
-        </header>
         <main>
           <section style="background-color: #e9ecef; padding: 60px 0; text-align: center;">
             <h2 style="font-size: 36px; color: #333; margin-bottom: 20px;">Our Services</h2>
@@ -459,17 +428,6 @@ const router = useRouter();
       label: 'Contact Page',
       category: 'Prebuilt Pages',
       content: `
-        <header style="background-color: #f8f9fa; padding: 20px 0;">
-          <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
-            <h1 style="font-size: 24px; color: #333;">Your Company</h1>
-            <nav>
-              <a href="#" style="margin-right: 15px; color: #333; text-decoration: none;">Home</a>
-              <a href="#" style="margin-right: 15px; color: #333; text-decoration: none;">About</a>
-              <a href="#" style="margin-right: 15px; color: #333; text-decoration: none;">Services</a>
-              <a href="#" style="color: #333; text-decoration: none;">Contact</a>
-            </nav>
-          </div>
-        </header>
         <main>
           <section style="background-color: #e9ecef; padding: 60px 0; text-align: center;">
             <h2 style="font-size: 36px; color: #333; margin-bottom: 20px;">Contact Us</h2>
