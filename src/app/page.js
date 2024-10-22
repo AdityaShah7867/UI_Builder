@@ -59,7 +59,9 @@ export default function Home() {
                 <p className="text-gray-600">Create pages that look great on any device, automatically.</p>
               </div>
               <div className="text-center">
-                <div className="text-4xl mb-4">🔄</div>
+                <div className="text-4xl mb-4 flex justify-center items-center  ">
+                  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4DpQqDEq9uPtEPS1ZiRIqoouAJ26VPniPcA&s" className="w-10 h-10" alt="Contentstack" />
+                </div>
                 <h3 className="text-xl font-semibold mb-2">Contentstack Integration</h3>
                 <p className="text-gray-600">Seamlessly manage your content with Contentstack CMS integration.</p>
               </div>

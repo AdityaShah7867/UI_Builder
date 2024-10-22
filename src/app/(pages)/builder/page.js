@@ -561,6 +561,61 @@ const Builder = () => {
       </svg>`,
     });
 
+    // Add this new block for the blog page template
+    editor.BlockManager.add("prebuilt-blog", {
+      label: "Blog Page",
+      category: "Prebuilt Pages",
+      content: `
+        <main>
+          <section style="background-color: #e9ecef; padding: 60px 0; text-align: center;">
+            <h2 style="font-size: 36px; color: #333; margin-bottom: 20px;">Our Blog</h2>
+            <p style="font-size: 18px; color: #666; max-width: 800px; margin: 0 auto;">Stay updated with our latest news, insights, and industry trends.</p>
+          </section>
+          <section style="padding: 60px 0;">
+            <div style="max-width: 1200px; margin: 0 auto;">
+              <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px;">
+                <article style="border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+                  <img src="https://via.placeholder.com/300x200" alt="Blog post 1" style="width: 100%; height: 200px; object-fit: cover;">
+                  <div style="padding: 20px;">
+                    <h3 style="font-size: 22px; color: #333; margin-bottom: 10px;">Blog Post Title 1</h3>
+                    <p style="color: #666; margin-bottom: 15px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    <a href="#" style="color: #007bff; text-decoration: none; font-weight: bold;">Read More</a>
+                  </div>
+                </article>
+                <article style="border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+                  <img src="https://via.placeholder.com/300x200" alt="Blog post 2" style="width: 100%; height: 200px; object-fit: cover;">
+                  <div style="padding: 20px;">
+                    <h3 style="font-size: 22px; color: #333; margin-bottom: 10px;">Blog Post Title 2</h3>
+                    <p style="color: #666; margin-bottom: 15px;">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    <a href="#" style="color: #007bff; text-decoration: none; font-weight: bold;">Read More</a>
+                  </div>
+                </article>
+                <article style="border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+                  <img src="https://via.placeholder.com/300x200" alt="Blog post 3" style="width: 100%; height: 200px; object-fit: cover;">
+                  <div style="padding: 20px;">
+                    <h3 style="font-size: 22px; color: #333; margin-bottom: 10px;">Blog Post Title 3</h3>
+                    <p style="color: #666; margin-bottom: 15px;">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                    <a href="#" style="color: #007bff; text-decoration: none; font-weight: bold;">Read More</a>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </section>
+        </main>
+        <footer style="background-color: #343a40; color: #fff; padding: 20px 0; text-align: center;">
+          <p>&copy; 2023 Your Company. All rights reserved.</p>
+        </footer>
+      `,
+      media: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <rect width="24" height="24" fill="#f8f9fa"/>
+        <rect y="2" width="24" height="4" fill="#343a40"/>
+        <rect y="18" width="24" height="4" fill="#343a40"/>
+        <rect x="2" y="8" width="20" height="3" fill="#e9ecef"/>
+        <rect x="2" y="12" width="20" height="1" fill="#e9ecef"/>
+        <rect x="2" y="14" width="20" height="1" fill="#e9ecef"/>
+      </svg>`,
+    });
+
     // Add this to your existing useEffect hook
     editor.Panels.addButton("options", {
       id: "device-desktop",
