@@ -14,6 +14,10 @@ export async function POST(req) {
       return new Response(JSON.stringify({ message: 'User not found' }), { status: 400 });
     }
 
+    if (!user.verified) {
+      return new Response(JSON.stringify({ message: 'Please verify your email before logging in' }), { status: 400 });
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return new Response(JSON.stringify({ message: 'Invalid credentials' }), { status: 400 });

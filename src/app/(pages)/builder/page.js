@@ -7,6 +7,7 @@ import { saveToContentstack } from '@/app/utils/contentstackHelper';
 import toast, { Toaster } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import Image from 'next/image';
 
 const Builder = () => {
   const editorRef = useRef(null);
@@ -23,6 +24,7 @@ const router = useRouter();
   const [isCustomModalOpen, setIsCustomModalOpen] = useState(false);
   const [customHtml, setCustomHtml] = useState('');
   const [customCss, setCustomCss] = useState('');
+  const [referenceImage, setReferenceImage] = useState(null);
 
   useEffect(() => {
     // Extract pageref from URL
@@ -648,6 +650,44 @@ const router = useRouter();
       run: () => setIsCustomModalOpen(true)
     });
 
+    // Add this inside your useEffect hook, after other block definitions
+    editor.BlockManager.add('google-map', {
+      label: 'Google Map',
+      category: 'Basic',
+      content: {
+        type: 'map',
+        style: {
+          height: '350px'
+        }
+      },
+      media: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#000000"/>
+      </svg>`
+    });
+
+    // Add this after your GrapesJS initialization
+    editor.DomComponents.addType('map', {
+      model: {
+        defaults: {
+          traits: [
+            {
+              type: 'text',
+              name: 'address',
+              label: 'Address',
+              placeholder: 'Enter location',
+            },
+          ],
+        },
+      },
+      view: {
+        onRender() {
+          const address = this.model.get('address') || 'Times Square, New York';
+          const encodedAddress = encodeURIComponent(address);
+          this.el.innerHTML = `<iframe width="100%" height="100%" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${encodedAddress}" allowfullscreen></iframe>`;
+        },
+      },
+    });
+
     // editorRef.current = editor;
 
     return () => {
@@ -668,10 +708,24 @@ const router = useRouter();
     };
   }, []);
 
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setReferenceImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleAiPrompt = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.post('/api/generate-component', { prompt: aiPrompt });
+      const response = await axios.post('/api/generate-component', { 
+        prompt: aiPrompt,
+        referenceImage: referenceImage
+      });
       let generatedHtml = response.data.html;
       
       // Remove markdown formatting and backticks
@@ -683,6 +737,7 @@ const router = useRouter();
         
         setIsModalOpen(false);
         setAiPrompt('');
+        setReferenceImage(null);
         toast.success('Component generated successfully!');
       } else {
         throw new Error('Editor instance not available');
@@ -777,9 +832,28 @@ const router = useRouter();
               className="w-full h-32 p-2 border border-gray-300 rounded-md mb-4 resize-none"
               placeholder="Describe the component you want to create..."
             />
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Reference Image (optional)
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              />
+            </div>
+            {referenceImage && (
+              <div className="mb-4">
+                <Image src={referenceImage} alt="Reference" width={200} height={200} className="object-contain" />
+              </div>
+            )}
             <div className="flex justify-end">
               <button
-                onClick={() => setIsModalOpen(false)}
+                onClick={() => {
+                  setIsModalOpen(false);
+                  setReferenceImage(null);
+                }}
                 className="px-4 py-2 mr-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition duration-300"
                 disabled={isLoading}
               >

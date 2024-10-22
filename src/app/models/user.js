@@ -16,6 +16,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please provide a password'],
   },
+  verified: {
+    type: Boolean,
+    default: false, // New field to track if the user is verified
+  },
 });
 
 export default mongoose.models.User || mongoose.model('User', UserSchema);

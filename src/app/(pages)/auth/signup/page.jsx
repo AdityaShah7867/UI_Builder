@@ -23,7 +23,7 @@ const Page = () => {
     if (response.ok) {
       localStorage.setItem('token', data.token); // Save token to local storage
       router.push('/auth/login'); // Redirect to dashboard
-      toast.success("login successful");
+      toast.success("Please Check your Email for verification");
     } else {
       // Handle error (e.g., show error message)
         toast.error(data.message);
