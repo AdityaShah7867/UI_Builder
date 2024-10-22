@@ -49,6 +49,9 @@ const Page = () => {
               Welcome back
             </h2>
           </div>
+          <div>
+            <p className="text-sm text-gray-600">Test Account:adityashah9866@gmail.com, password: Aditya@123</p>
+          </div>
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-4">
               <motion.div
