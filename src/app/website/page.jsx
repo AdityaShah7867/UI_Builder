@@ -1,8 +1,9 @@
 'use client';
-import { useSearchParams, useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
 
-const Page = () => {
+import { useSearchParams, useRouter } from 'next/navigation';
+import React, { useEffect, useState, Suspense } from 'react';
+
+const PageContent = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [username, setUsername] = useState('');
@@ -47,7 +48,7 @@ const Page = () => {
           </div>
         </div>
       </nav>
-      
+
       {websiteContent ? (
         <div>
           <style dangerouslySetInnerHTML={{ __html: websiteContent.css }} />
@@ -59,6 +60,14 @@ const Page = () => {
         </div>
       )}
     </div>
+  );
+};
+
+const Page = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PageContent />
+    </Suspense>
   );
 };
 
