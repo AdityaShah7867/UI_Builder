@@ -20,6 +20,9 @@ const router = useRouter();
   const [aiPrompt, setAiPrompt] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const modalRef = useRef(null);
+  const [isCustomModalOpen, setIsCustomModalOpen] = useState(false);
+  const [customHtml, setCustomHtml] = useState('');
+  const [customCss, setCustomCss] = useState('');
 
   useEffect(() => {
     // Extract pageref from URL
@@ -490,11 +493,11 @@ const router = useRouter();
       command: 'set-device-tablet',
     });
 
-    editor.Panels.addButton('options', {
-      id: 'device-mobile',
-      label: 'Mobile',
-      command: 'set-device-mobile',
-    });
+    // editor.Panels.addButton('options', {
+    //   id: 'device-mobile',
+    //   label: 'Mobile',
+    //   command: 'set-device-mobile',
+    // });
 
     editor.Commands.add('set-device-desktop', {
       run: editor => editor.setDevice('Desktop')
@@ -509,49 +512,8 @@ const router = useRouter();
     });
 
     // Add this to your existing useEffect hook
-    editor.DomComponents.addType('custom-card', {
-      isComponent: el => el.tagName === 'DIV' && el.classList.contains('custom-card'),
-      model: {
-        defaults: {
-          traits: [
-            {
-              type: 'text',
-              name: 'title',
-              label: 'Card Title',
-            },
-            {
-              type: 'text',
-              name: 'content',
-              label: 'Card Content',
-            },
-          ],
-        },
-      },
-      view: {
-        init() {
-          this.listenTo(this.model, 'change:attributes', this.updateContent);
-        },
-        updateContent() {
-          const title = this.model.get('attributes').title || 'Card Title';
-          const content = this.model.get('attributes').content || 'Card Content';
-          this.el.innerHTML = `
-            <div class="card">
-              <h3>${title}</h3>
-              <p>${content}</p>
-            </div>
-          `;
-        },
-      },
-    });
-
-    editor.BlockManager.add('custom-card', {
-      label: 'Custom Card',
-      content: {
-        type: 'custom-card',
-        attributes: { class: 'custom-card' },
-      },
-    });
-
+   
+ 
     // Add this to your existing useEffect hook
     editor.Panels.addButton('options', {
       id: 'open-code',
@@ -561,7 +523,15 @@ const router = useRouter();
     });
 
     editor.Commands.add('open-code', {
-      run: editor => editor.CodeManager.getViewer('CodeMirror').setContent(editor.getHtml())
+      run: editor => {
+        const viewer = editor.CodeManager.getViewer('CodeMirror');
+        if (viewer) {
+          viewer.setContent(editor.getHtml());
+          viewer.open();
+        } else {
+          console.error('CodeMirror viewer not found');
+        }
+      }
     });
 
     // Add this to your existing useEffect hook
@@ -579,12 +549,7 @@ const router = useRouter();
       attributes: { title: 'Redo' },
     });
 
-    // Add this to your existing useEffect hook
-    editor.BlockManager.add('custom-block-category', {
-      label: 'Custom Blocks',
-      category: 'Custom',
-      content: '<div>Your custom block content</div>',
-    });
+   
 
     // Add these functions to your component
     const saveTemplate = () => {
@@ -669,6 +634,18 @@ const router = useRouter();
 
     editor.Commands.add('open-ai-prompt', {
       run: () => setIsModalOpen(true)
+    });
+
+    // Add button to open custom HTML/CSS modal
+    editor.Panels.addButton('options', {
+      id: 'custom-html-css',
+      className: 'fa fa-pencil',
+      command: 'open-custom-html-css',
+      attributes: { title: 'Custom HTML/CSS' },
+    });
+
+    editor.Commands.add('open-custom-html-css', {
+      run: () => setIsCustomModalOpen(true)
     });
 
     // editorRef.current = editor;
@@ -756,6 +733,19 @@ const router = useRouter();
     }
   };
 
+  const handleAddCustomHtmlCss = () => {
+    if (editorRef.current) {
+      const styleTag = `<style>${customCss}</style>`;
+      editorRef.current.addComponents(`${styleTag}${customHtml}`);
+      setIsCustomModalOpen(false);
+      setCustomHtml('');
+      setCustomCss('');
+      toast.success('Custom HTML/CSS added successfully!');
+    } else {
+      toast.error('Editor instance not available');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <Toaster />
@@ -801,6 +791,40 @@ const router = useRouter();
                 disabled={isLoading}
               >
                 {isLoading ? 'Generating...' : 'Generate'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isCustomModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h2 className="text-xl font-semibold mb-4">Custom HTML/CSS</h2>
+            <textarea
+              value={customHtml}
+              onChange={(e) => setCustomHtml(e.target.value)}
+              className="w-full h-32 p-2 border border-gray-300 rounded-md mb-4 resize-none"
+              placeholder="Enter your HTML here..."
+            />
+            <textarea
+              value={customCss}
+              onChange={(e) => setCustomCss(e.target.value)}
+              className="w-full h-32 p-2 border border-gray-300 rounded-md mb-4 resize-none"
+              placeholder="Enter your CSS here..."
+            />
+            <div className="flex justify-end">
+              <button
+                onClick={() => setIsCustomModalOpen(false)}
+                className="px-4 py-2 mr-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition duration-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAddCustomHtmlCss}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300"
+              >
+                Add
               </button>
             </div>
           </div>

@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import localFont from "next/font/local";
 import "./globals.css";
+import Script from 'next/script';  // Import Script to handle script injections
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -31,6 +32,11 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-black`}
       >
+
+
+
+
+
         {children}
       </body>
     </html>

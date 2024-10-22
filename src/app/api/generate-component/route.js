@@ -25,6 +25,8 @@ export async function POST(req) {
       8. Include appropriate aria labels and roles for accessibility.
       9. Optimize for performance by using efficient CSS selectors and minimal inline styles.
       10. Ensure the component is easily integrable into popular frameworks like React, Vue, or Angular.
+      11. Wrap the entire component HTML under a single parent <section> element.
+
 
       Provide only the HTML and CSS code without any explanation or markdown formatting. Include internal CSS styles within a <style> tag.
     `);
