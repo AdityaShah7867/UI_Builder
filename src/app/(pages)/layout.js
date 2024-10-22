@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import ReactMarkdown from 'react-markdown';
 
 export default function RootLayout({ children }) {
   const router = useRouter();
@@ -31,7 +32,9 @@ export default function RootLayout({ children }) {
         body: JSON.stringify({ question }),
       });
       const data = await response.json();
-      setMessages(prev => [...prev, { type: 'bot', content: data.answer }]);
+      
+      // Add the bot's response to the messages
+      setMessages(prev => [...prev, { type: 'bot', content: data.response }]);
     } catch (error) {
       console.error('Error:', error);
       setMessages(prev => [...prev, { type: 'bot', content: 'Sorry, there was an error processing your question.' }]);
@@ -68,7 +71,11 @@ export default function RootLayout({ children }) {
                 {messages.map((msg, index) => (
                   <div key={index} className={`mb-2 ${msg.type === 'user' ? 'text-right' : 'text-left'}`}>
                     <span className={`inline-block p-2 rounded-lg ${msg.type === 'user' ? 'bg-blue-100' : 'bg-gray-100'}`}>
-                      {msg.content}
+                      {msg.type === 'user' ? (
+                        msg.content
+                      ) : (
+                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      )}
                     </span>
                   </div>
                 ))}

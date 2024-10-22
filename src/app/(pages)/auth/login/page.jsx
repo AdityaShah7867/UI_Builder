@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import React, { useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast';
 import { FaEnvelope, FaLock, FaSignInAlt } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 
 const Page = () => {
   const [email, setEmail] = useState('');
@@ -32,20 +33,28 @@ const Page = () => {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex bg-white">
       <Toaster />
-      {/* Left side - Login form */}
-      <div className="w-1/2 flex items-center justify-center bg-white py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8">
+      {/* Login form */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full md:w-1/2 flex items-center justify-center p-8"
+      >
+        <div className="w-full max-w-md space-y-8">
           <div>
             <h1 className="text-4xl font-bold text-center text-gray-900 mb-2">UI Builder</h1>
             <h2 className="text-2xl font-semibold text-center text-gray-700">
-              Sign in to your account
+              Welcome back
             </h2>
           </div>
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-            <div className="rounded-md -space-y-px">
-              <div className="mb-4">
+            <div className="space-y-4">
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
                 <label htmlFor="email-address" className="sr-only">Email address</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -57,14 +66,17 @@ const Page = () => {
                     type="email"
                     autoComplete="email"
                     required
-                    className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm pl-10"
+                    className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm pl-10 transition duration-300 ease-in-out"
                     placeholder="Email address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
-              </div>
-              <div className="mb-4">
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
                 <label htmlFor="password" className="sr-only">Password</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -76,43 +88,51 @@ const Page = () => {
                     type="password"
                     autoComplete="current-password"
                     required
-                    className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm pl-10"
+                    className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm pl-10 transition duration-300 ease-in-out"
                     placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
-              </div>
+              </motion.div>
             </div>
 
             <div>
-              <button
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 type="submit"
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out"
+                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 ease-in-out"
               >
                 <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                  <FaSignInAlt className="h-5 w-5 text-blue-500 group-hover:text-blue-400" />
+                  <FaSignInAlt className="h-5 w-5 text-blue-300 group-hover:text-blue-200" />
                 </span>
                 Sign in
-              </button>
+              </motion.button>
             </div>
           </form>
-          <div className="text-center">
-            <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+          <div className="text-center space-y-2">
+            <a href="#" className="font-medium text-blue-600 hover:text-blue-500 transition duration-300 ease-in-out">
               Forgot your password?
             </a>
-          </div>
-          <div className="text-center text-sm text-gray-600">
-            Don't have an account?{' '}
-            <a onClick={() => router.push('/auth/signup')} className="font-medium cursor-pointer text-blue-600 hover:text-blue-500">
-              Sign up
-            </a>
+            <div className="text-sm text-gray-600">
+              Don't have an account?{' '}
+              <a onClick={() => router.push('/auth/signup')} className="font-medium cursor-pointer text-blue-600 hover:text-blue-500 transition duration-300 ease-in-out">
+                Sign up
+              </a>
+            </div>
           </div>
         </div>
-      </div>
+      </motion.div>
       
       {/* Right side - Background image and app benefits */}
-      <div className="w-1/2 bg-cover bg-center relative" style={{backgroundImage: "url('/path/to/your/image.jpg')"}}>
+      <motion.div 
+        initial={{ opacity: 0, x: 50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="hidden md:block w-1/2 bg-cover bg-center relative"
+        style={{backgroundImage: "url('/path/to/your/image.jpg')"}}
+      >
         <div className="absolute inset-0 bg-blue-600 opacity-75"></div>
         <div className="relative z-10 flex flex-col justify-center h-full px-8 text-white">
           <h2 className="text-3xl font-bold mb-6">Why Use UI Builder?</h2>
@@ -135,7 +155,7 @@ const Page = () => {
             </li>
           </ul>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

@@ -49,36 +49,43 @@ Sharing and Access:
 3. Access Control: Set pages as public or private.
 4. Collaboration Tools: Invite team members to work on the site together.
 
-Additional Features:
-- SEO Tools: Built-in features to improve search engine rankings.
-- Performance Optimization: Automatic optimization for fast loading times.
-- Analytics Integration: Track visitor data and site performance.
-- Third-Party Integrations: Connect with popular services and APIs.
-- Mobile App: Manage your site on-the-go with our mobile application.
-- Customer Support: Access to tutorials, documentation, and support team.
 
 Our platform is designed to cater to both beginners and advanced users, providing an intuitive yet powerful website building experience. Whether you're creating a simple landing page or a complex multi-page website, our tools and features are here to help you bring your vision to life quickly and efficiently.
 `;
 
 export async function POST(req) {
-  const { messages } = await req.json();
-
   try {
+    const body = await req.json();
+    console.log('Received body:', body);
+
+    if (!body || !body.question) {
+      console.error('Invalid request body:', body);
+      return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+    }
+
+    const { question } = body;
+
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     const chat = model.startChat({
-      history: messages.map(msg => ({
-        role: msg.role,
-        parts: [{ text: msg.content }]
-      }))
+      history: [
+        {
+          role: "user",
+          parts: [{ text: websiteInfo }]
+        },
+        {
+          role: "model",
+          parts: [{ text: "Thank you for providing the information about your website builder platform. How can I assist you today?" }]
+        }
+      ]
     });
 
-    const result = await chat.sendMessage(messages[messages.length - 1].content);
+    const result = await chat.sendMessage(question);
     const response = result.response;
 
     return NextResponse.json({ response: response.text() });
   } catch (error) {
     console.error('Gemini API error:', error);
-    return NextResponse.json({ error: 'Failed to process chat' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to process chat', details: error.message }, { status: 500 });
   }
 }
