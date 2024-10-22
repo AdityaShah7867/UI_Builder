@@ -58,6 +58,7 @@ const DashboardPage = () => {
     { name: "Contact", icon: <FaEnvelope className="w-5 h-5" /> },
     { name: "About Us", icon: <FaInfoCircle className="w-5 h-5" /> },
     { name: "Services", icon: <FaCogs className="w-5 h-5" /> },
+    { name: "Blog", icon: <FaEdit className="w-5 h-5" /> }, // Added Blog option
   ];
 
   const handleLogout = () => {

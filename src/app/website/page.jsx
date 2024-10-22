@@ -54,6 +54,7 @@ const PageContent = () => {
               <button onClick={() => handleNavClick('contact')} className="py-4 px-2 text-gray-300 hover:text-white transition duration-300">Contact</button>
               <button onClick={() => handleNavClick('about_us')} className="py-4 px-2 text-gray-300 hover:text-white transition duration-300">About Us</button>
               <button onClick={() => handleNavClick('services')} className="py-4 px-2 text-gray-300 hover:text-white transition duration-300">Services</button>
+              <button onClick={() => handleNavClick('blog')} className="py-4 px-2 text-gray-300 hover:text-white transition duration-300">Blog</button>
             </div>
           </div>
         </div>
