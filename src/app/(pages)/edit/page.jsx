@@ -1,189 +1,268 @@
-'use client';
-import { useEffect, useRef, useState } from 'react';
-import grapesjs from 'grapesjs';
-import gjsBlocksBasic from 'grapesjs-blocks-basic';
-import 'grapesjs/dist/css/grapes.min.css';
-import { saveToContentstack } from '@/app/utils/contentstackHelper';
-import toast, { Toaster } from 'react-hot-toast';
-import { useRouter } from 'next/navigation';
-import axios from 'axios';
-import Image from 'next/image';
+"use client";
+import { useEffect, useRef, useState } from "react";
+import grapesjs from "grapesjs";
+import gjsBlocksBasic from "grapesjs-blocks-basic";
+import "grapesjs/dist/css/grapes.min.css";
+import { saveToContentstack } from "@/app/utils/contentstackHelper";
+import toast, { Toaster } from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+import Image from "next/image";
 
 const Builder = () => {
   const editorRef = useRef(null);
-  const [content, setContent] = useState('');
-  const [css, setCss] = useState('');
-  const [buttonText, setButtonText] = useState('Click Me');
-  const [buttonColor, setButtonColor] = useState('#007bff');
-  const [pageRef, setPageRef] = useState(''); // New state for pageref
-const router = useRouter();
+  const [content, setContent] = useState("");
+  const [css, setCss] = useState("");
+  const [buttonText, setButtonText] = useState("Click Me");
+  const [buttonColor, setButtonColor] = useState("#007bff");
+  const [pageRef, setPageRef] = useState(""); // New state for pageref
+  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [aiPrompt, setAiPrompt] = useState('');
+  const [aiPrompt, setAiPrompt] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const modalRef = useRef(null);
   const [isCustomModalOpen, setIsCustomModalOpen] = useState(false);
-  const [customHtml, setCustomHtml] = useState('');
-  const [customCss, setCustomCss] = useState('');
+  const [customHtml, setCustomHtml] = useState("");
+  const [customCss, setCustomCss] = useState("");
   const [referenceImage, setReferenceImage] = useState(null);
-  const [uid, setUid] = useState('');
-  const [cssUid, setCssUid] = useState('');
+  const [uid, setUid] = useState("");
+  const [cssUid, setCssUid] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleBack = () => {
+    router.push("/dashboard");
+  };
 
   useEffect(() => {
     // Extract pageref from URL
 
     const params = new URLSearchParams(window.location.search);
-    const uidParam = params.get('uid');
-    const cssuidParam = params.get('cssuid');
-    const pageref = params.get('pageref');
-
+    const uidParam = params.get("uid");
+    const cssuidParam = params.get("cssuid");
+    const pageref = params.get("pageref");
 
     // const params = new URLSearchParams(window.location.search);
     // const pageref = params.get('pageref');
     if (pageref) {
       setPageRef(pageref);
-      console.log('Page Reference:', pageref); // Log or use the pageref as needed
+      console.log("Page Reference:", pageref); // Log or use the pageref as needed
     }
 
     const editor = grapesjs.init({
-      container: '#gjs',
-      height: '100vh',
-      width: '100%',
+      container: "#gjs",
+      height: "100vh",
+      width: "100%",
       storageManager: false,
       plugins: [gjsBlocksBasic],
       styleManager: {
         sectors: [
           {
-            name: 'Typography',
+            name: "Typography",
             open: true,
             properties: [
-              { 
-                name: 'Font Size', 
-                property: 'font-size', 
-                type: 'number',
-                units: ['px', 'em', 'rem', '%'],
+              {
+                name: "Font Size",
+                property: "font-size",
+                type: "number",
+                units: ["px", "em", "rem", "%"],
                 min: 1,
                 max: 100,
-                step: 1
+                step: 1,
               },
-              { name: 'Font Color', property: 'color', type: 'color' },
-              { name: 'Background Color', property: 'background-color', type: 'color' },
-              { name: 'Font Weight', property: 'font-weight', type: 'select', options: [
-                  { value: 'normal', name: 'Normal' },
-                  { value: 'bold', name: 'Bold' },
-                  { value: 'bolder', name: 'Bolder' },
-                  { value: 'lighter', name: 'Lighter' },
-                ]
+              { name: "Font Color", property: "color", type: "color" },
+              {
+                name: "Background Color",
+                property: "background-color",
+                type: "color",
               },
-              { name: 'Text Shadow', property: 'text-shadow', type: 'text', placeholder: '0 0 5px #000' },
-              { name: 'Text Align', property: 'text-align', type: 'select', options: [
-                  { value: 'left', name: 'Left' },
-                  { value: 'center', name: 'Center' },
-                  { value: 'right', name: 'Right' },
-                ]
+              {
+                name: "Font Weight",
+                property: "font-weight",
+                type: "select",
+                options: [
+                  { value: "normal", name: "Normal" },
+                  { value: "bold", name: "Bold" },
+                  { value: "bolder", name: "Bolder" },
+                  { value: "lighter", name: "Lighter" },
+                ],
               },
-              { name: 'Margin', property: 'margin', type: 'text', placeholder: '0 auto' },
+              {
+                name: "Text Shadow",
+                property: "text-shadow",
+                type: "text",
+                placeholder: "0 0 5px #000",
+              },
+              {
+                name: "Text Align",
+                property: "text-align",
+                type: "select",
+                options: [
+                  { value: "left", name: "Left" },
+                  { value: "center", name: "Center" },
+                  { value: "right", name: "Right" },
+                ],
+              },
+              {
+                name: "Margin",
+                property: "margin",
+                type: "text",
+                placeholder: "0 auto",
+              },
             ],
           },
           // New sector for Image properties
           {
-            name: 'Image',
+            name: "Image",
             open: true,
             properties: [
-              { name: 'Width', property: 'width', type: 'text', placeholder: '100%' },
-              { name: 'Height', property: 'height', type: 'text', placeholder: 'auto' },
-              { name: 'Border', property: 'border', type: 'text', placeholder: '1px solid #000' },
-              { name: 'Border Radius', property: 'border-radius', type: 'text', placeholder: '5px' },
-              { name: 'Box Shadow', property: 'box-shadow', type: 'text', placeholder: '0 4px 8px rgba(0,0,0,0.2)' },
-              { name: 'Text Align', property: 'text-align', type: 'select', options: [
-                  { value: 'left', name: 'Left' },
-                  { value: 'center', name: 'Center' },
-                  { value: 'right', name: 'Right' },
-                ]
+              {
+                name: "Width",
+                property: "width",
+                type: "text",
+                placeholder: "100%",
               },
-              { name: 'Margin', property: 'margin', type: 'text', placeholder: '0 auto' },
+              {
+                name: "Height",
+                property: "height",
+                type: "text",
+                placeholder: "auto",
+              },
+              {
+                name: "Border",
+                property: "border",
+                type: "text",
+                placeholder: "1px solid #000",
+              },
+              {
+                name: "Border Radius",
+                property: "border-radius",
+                type: "text",
+                placeholder: "5px",
+              },
+              {
+                name: "Box Shadow",
+                property: "box-shadow",
+                type: "text",
+                placeholder: "0 4px 8px rgba(0,0,0,0.2)",
+              },
+              {
+                name: "Text Align",
+                property: "text-align",
+                type: "select",
+                options: [
+                  { value: "left", name: "Left" },
+                  { value: "center", name: "Center" },
+                  { value: "right", name: "Right" },
+                ],
+              },
+              {
+                name: "Margin",
+                property: "margin",
+                type: "text",
+                placeholder: "0 auto",
+              },
               // New property for image alignment
-              { name: 'Image Align', property: 'image-align', type: 'select', options: [
-                  { value: 'left', name: 'Left' },
-                  { value: 'center', name: 'Center' },
-                  { value: 'right', name: 'Right' },
-                ]
-              },
-              { 
-                name: 'Alignment', 
-                property: 'display', 
-                type: 'radio',
+              {
+                name: "Image Align",
+                property: "image-align",
+                type: "select",
                 options: [
-                  { value: 'inline', name: 'Inline' },
-                  { value: 'block', name: 'Block' }
-                ]
+                  { value: "left", name: "Left" },
+                  { value: "center", name: "Center" },
+                  { value: "right", name: "Right" },
+                ],
               },
-              { 
-                name: 'Center Image', 
-                property: 'margin', 
-                type: 'radio',
+              {
+                name: "Alignment",
+                property: "display",
+                type: "radio",
                 options: [
-                  { value: '0', name: 'Left' },
-                  { value: '0 auto', name: 'Center' },
-                  { value: '0 0 0 auto', name: 'Right' }
-                ]
+                  { value: "inline", name: "Inline" },
+                  { value: "block", name: "Block" },
+                ],
+              },
+              {
+                name: "Center Image",
+                property: "margin",
+                type: "radio",
+                options: [
+                  { value: "0", name: "Left" },
+                  { value: "0 auto", name: "Center" },
+                  { value: "0 0 0 auto", name: "Right" },
+                ],
               },
             ],
           },
           {
-            name: 'Box',
+            name: "Box",
             open: true,
             properties: [
-              { name: 'Border', property: 'border', type: 'text', placeholder: '1px solid #000' },
-              { name: 'Border Radius', property: 'border-radius', type: 'text', placeholder: '5px' },
-              { name: 'Box Shadow', property: 'box-shadow', type: 'text', placeholder: '0 4px 8px rgba(0,0,0,0.2)' },
+              {
+                name: "Border",
+                property: "border",
+                type: "text",
+                placeholder: "1px solid #000",
+              },
+              {
+                name: "Border Radius",
+                property: "border-radius",
+                type: "text",
+                placeholder: "5px",
+              },
+              {
+                name: "Box Shadow",
+                property: "box-shadow",
+                type: "text",
+                placeholder: "0 4px 8px rgba(0,0,0,0.2)",
+              },
             ],
           },
           {
-            name: 'Layout',
+            name: "Layout",
             open: true,
             properties: [
-              { 
-                name: 'Display', 
-                property: 'display', 
-                type: 'select',
+              {
+                name: "Display",
+                property: "display",
+                type: "select",
                 options: [
-                  { value: 'block', name: 'Block' },
-                  { value: 'inline', name: 'Inline' },
-                  { value: 'inline-block', name: 'Inline Block' },
-                  { value: 'flex', name: 'Flex' },
-                ]
+                  { value: "block", name: "Block" },
+                  { value: "inline", name: "Inline" },
+                  { value: "inline-block", name: "Inline Block" },
+                  { value: "flex", name: "Flex" },
+                ],
               },
-              { 
-                name: 'Flex Direction', 
-                property: 'flex-direction', 
-                type: 'radio',
+              {
+                name: "Flex Direction",
+                property: "flex-direction",
+                type: "radio",
                 options: [
-                  { value: 'row', name: 'Row' },
-                  { value: 'column', name: 'Column' }
-                ]
+                  { value: "row", name: "Row" },
+                  { value: "column", name: "Column" },
+                ],
               },
-              { 
-                name: 'Justify Content', 
-                property: 'justify-content', 
-                type: 'select',
+              {
+                name: "Justify Content",
+                property: "justify-content",
+                type: "select",
                 options: [
-                  { value: 'flex-start', name: 'Start' },
-                  { value: 'center', name: 'Center' },
-                  { value: 'flex-end', name: 'End' },
-                  { value: 'space-between', name: 'Space Between' },
-                  { value: 'space-around', name: 'Space Around' }
-                ]
+                  { value: "flex-start", name: "Start" },
+                  { value: "center", name: "Center" },
+                  { value: "flex-end", name: "End" },
+                  { value: "space-between", name: "Space Between" },
+                  { value: "space-around", name: "Space Around" },
+                ],
               },
-              { 
-                name: 'Align Items', 
-                property: 'align-items', 
-                type: 'select',
+              {
+                name: "Align Items",
+                property: "align-items",
+                type: "select",
                 options: [
-                  { value: 'flex-start', name: 'Start' },
-                  { value: 'center', name: 'Center' },
-                  { value: 'flex-end', name: 'End' },
-                  { value: 'stretch', name: 'Stretch' }
-                ]
+                  { value: "flex-start", name: "Start" },
+                  { value: "center", name: "Center" },
+                  { value: "flex-end", name: "End" },
+                  { value: "stretch", name: "Stretch" },
+                ],
               },
             ],
           },
@@ -191,8 +270,8 @@ const router = useRouter();
       },
       // Add this to your GrapesJS init configuration
       assetManager: {
-        upload: 'https://your-upload-endpoint.com',
-        uploadName: 'files',
+        upload: "https://your-upload-endpoint.com",
+        uploadName: "files",
         multiUpload: true,
         assets: [
           // Your default assets
@@ -207,28 +286,28 @@ const router = useRouter();
     editorRef.current = editor;
 
     // Add custom button block with link
-    editor.BlockManager.add('custom-button', {
-      label: 'Custom Button',
+    editor.BlockManager.add("custom-button", {
+      label: "Custom Button",
       content: `<a href="#" class="dynamic-link" style="padding: 10px; background-color: ${buttonColor}; color: #fff; text-decoration: none; border: none; border-radius: 5px;">${buttonText}</a>`,
-      category: 'Basic',
+      category: "Basic",
     });
 
     // Update the image alignment handling
-    editor.on('component:update', (model) => {
-      if (model.get('type') === 'image') {
-        const imageAlign = model.getStyle()['image-align'];
+    editor.on("component:update", (model) => {
+      if (model.get("type") === "image") {
+        const imageAlign = model.getStyle()["image-align"];
         if (imageAlign) {
-          let styles = { display: 'block' };
+          let styles = { display: "block" };
           switch (imageAlign) {
-            case 'left':
-              styles.marginRight = 'auto';
+            case "left":
+              styles.marginRight = "auto";
               break;
-            case 'center':
-              styles.marginLeft = 'auto';
-              styles.marginRight = 'auto';
+            case "center":
+              styles.marginLeft = "auto";
+              styles.marginRight = "auto";
               break;
-            case 'right':
-              styles.marginLeft = 'auto';
+            case "right":
+              styles.marginLeft = "auto";
               break;
           }
           model.setStyle(styles);
@@ -237,8 +316,8 @@ const router = useRouter();
     });
 
     // Add new 3-card layout block with preview
-    editor.BlockManager.add('three-card-layout', {
-      label: '3 Cards with Image',
+    editor.BlockManager.add("three-card-layout", {
+      label: "3 Cards with Image",
       content: `
         <div style="display: flex; justify-content: space-between; padding: 20px;">
           <div style="width: 30%; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
@@ -264,7 +343,7 @@ const router = useRouter();
           </div>
         </div>
       `,
-      category: 'Basic',
+      category: "Basic",
       media: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <rect x="1" y="3" width="6" height="18" rx="1" fill="#ccc"/>
         <rect x="9" y="3" width="6" height="18" rx="1" fill="#ccc"/>
@@ -273,9 +352,9 @@ const router = useRouter();
     });
 
     // Enhanced prebuilt pages
-    editor.BlockManager.add('prebuilt-landing', {
-      label: 'Landing Page',
-      category: 'Prebuilt Pages',
+    editor.BlockManager.add("prebuilt-landing", {
+      label: "Landing Page",
+      category: "Prebuilt Pages",
       content: `
         <main>
           <section style="background-color: #e9ecef; padding: 80px 0; text-align: center;">
@@ -353,9 +432,9 @@ const router = useRouter();
       </svg>`,
     });
 
-    editor.BlockManager.add('prebuilt-about', {
-      label: 'About Us Page',
-      category: 'Prebuilt Pages',
+    editor.BlockManager.add("prebuilt-about", {
+      label: "About Us Page",
+      category: "Prebuilt Pages",
       content: `
         <main>
           <section style="background-color: #e9ecef; padding: 60px 0; text-align: center;">
@@ -386,9 +465,9 @@ const router = useRouter();
       </svg>`,
     });
 
-    editor.BlockManager.add('prebuilt-services', {
-      label: 'Services Page',
-      category: 'Prebuilt Pages',
+    editor.BlockManager.add("prebuilt-services", {
+      label: "Services Page",
+      category: "Prebuilt Pages",
       content: `
         <main>
           <section style="background-color: #e9ecef; padding: 60px 0; text-align: center;">
@@ -438,9 +517,9 @@ const router = useRouter();
       </svg>`,
     });
 
-    editor.BlockManager.add('prebuilt-contact', {
-      label: 'Contact Page',
-      category: 'Prebuilt Pages',
+    editor.BlockManager.add("prebuilt-contact", {
+      label: "Contact Page",
+      category: "Prebuilt Pages",
       content: `
         <main>
           <section style="background-color: #e9ecef; padding: 60px 0; text-align: center;">
@@ -491,17 +570,17 @@ const router = useRouter();
     });
 
     // Add this to your existing useEffect hook
-    editor.Panels.addButton('options', {
-      id: 'device-desktop',
-      label: 'Desktop',
-      command: 'set-device-desktop',
+    editor.Panels.addButton("options", {
+      id: "device-desktop",
+      label: "Desktop",
+      command: "set-device-desktop",
       active: true,
     });
 
-    editor.Panels.addButton('options', {
-      id: 'device-tablet',
-      label: 'Tablet',
-      command: 'set-device-tablet',
+    editor.Panels.addButton("options", {
+      id: "device-tablet",
+      label: "Tablet",
+      command: "set-device-tablet",
     });
 
     // editor.Panels.addButton('options', {
@@ -510,57 +589,54 @@ const router = useRouter();
     //   command: 'set-device-mobile',
     // });
 
-    editor.Commands.add('set-device-desktop', {
-      run: editor => editor.setDevice('Desktop')
+    editor.Commands.add("set-device-desktop", {
+      run: (editor) => editor.setDevice("Desktop"),
     });
 
-    editor.Commands.add('set-device-tablet', {
-      run: editor => editor.setDevice('Tablet')
+    editor.Commands.add("set-device-tablet", {
+      run: (editor) => editor.setDevice("Tablet"),
     });
 
-    editor.Commands.add('set-device-mobile', {
-      run: editor => editor.setDevice('Mobile')
+    editor.Commands.add("set-device-mobile", {
+      run: (editor) => editor.setDevice("Mobile"),
     });
 
     // Add this to your existing useEffect hook
-   
- 
+
     // Add this to your existing useEffect hook
-    editor.Panels.addButton('options', {
-      id: 'open-code',
-      className: 'fa fa-code',
-      command: 'open-code',
-      attributes: { title: 'Open Code' },
+    editor.Panels.addButton("options", {
+      id: "open-code",
+      className: "fa fa-code",
+      command: "open-code",
+      attributes: { title: "Open Code" },
     });
 
-    editor.Commands.add('open-code', {
-      run: editor => {
-        const viewer = editor.CodeManager.getViewer('CodeMirror');
+    editor.Commands.add("open-code", {
+      run: (editor) => {
+        const viewer = editor.CodeManager.getViewer("CodeMirror");
         if (viewer) {
           viewer.setContent(editor.getHtml());
           viewer.open();
         } else {
-          console.error('CodeMirror viewer not found');
+          console.error("CodeMirror viewer not found");
         }
-      }
+      },
     });
 
     // Add this to your existing useEffect hook
-    editor.Panels.addButton('options', {
-      id: 'undo',
-      className: 'fa fa-undo',
-      command: 'undo',
-      attributes: { title: 'Undo' },
+    editor.Panels.addButton("options", {
+      id: "undo",
+      className: "fa fa-undo",
+      command: "undo",
+      attributes: { title: "Undo" },
     });
 
-    editor.Panels.addButton('options', {
-      id: 'redo',
-      className: 'fa fa-repeat',
-      command: 'redo',
-      attributes: { title: 'Redo' },
+    editor.Panels.addButton("options", {
+      id: "redo",
+      className: "fa fa-repeat",
+      command: "redo",
+      attributes: { title: "Redo" },
     });
-
-   
 
     // Add these functions to your component
     const saveTemplate = () => {
@@ -573,19 +649,18 @@ const router = useRouter();
     };
 
     // Add buttons to the editor panel
-    editor.Panels.addButton('options', {
-      id: 'save-template',
-      className: 'fa fa-save',
-      command: 'save-template',
-      attributes: { title: 'Save Template' },
+    editor.Panels.addButton("options", {
+      id: "save-template",
+      className: "fa fa-save",
+      command: "save-template",
+      attributes: { title: "Save Template" },
     });
 
-    editor.Commands.add('save-template', {
-      run: saveTemplate
+    editor.Commands.add("save-template", {
+      run: saveTemplate,
     });
 
     // Add this to your existing useEffect hook
-    
 
     // Add these functions to your component
     const exportHTML = () => {
@@ -602,30 +677,30 @@ const router = useRouter();
         </html>
       `;
       // Create a Blob and download it
-      const blob = new Blob([fullHTML], { type: 'text/html' });
+      const blob = new Blob([fullHTML], { type: "text/html" });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      a.download = 'exported-page.html';
+      a.download = "exported-page.html";
       a.click();
     };
 
     // Add button to the editor panel
-    editor.Panels.addButton('options', {
-      id: 'export-html',
-      className: 'fa fa-download',
-      command: 'export-html',
-      attributes: { title: 'Export HTML' },
+    editor.Panels.addButton("options", {
+      id: "export-html",
+      className: "fa fa-download",
+      command: "export-html",
+      attributes: { title: "Export HTML" },
     });
 
-    editor.Commands.add('export-html', {
-      run: exportHTML
+    editor.Commands.add("export-html", {
+      run: exportHTML,
     });
 
     // Add this after your GrapesJS initialization
     // editor.on('load', () => {
     //   const fontManager = editor.FontManager;
-      
+
     //   // Add Google Fonts
     //   fontManager.add('Google Fonts', [
     //     { name: 'Open Sans', value: '"Open Sans", sans-serif' },
@@ -636,97 +711,117 @@ const router = useRouter();
     // });
 
     // Add AI Prompt button
-    editor.Panels.addButton('options', {
-      id: 'ai-prompt',
-      className: 'fa fa-magic',
-      command: 'open-ai-prompt',
-      attributes: { title: 'AI Prompt' },
+    editor.Panels.addButton("options", {
+      id: "ai-prompt",
+      label: "AI",
+      className: "fa fa-magic",
+      command: "open-ai-prompt",
+      attributes: { 
+        title: "Build with AI",
+        style: "background-color: #3b82f6; color: white; padding: 5px 10px; border-radius: 4px; display: flex; align-items: center;"
+      },
     });
 
-    editor.Commands.add('open-ai-prompt', {
-      run: () => setIsModalOpen(true)
+    editor.Commands.add("open-ai-prompt", {
+      run: () => setIsModalOpen(true),
     });
 
     // Add button to open custom HTML/CSS modal
-    editor.Panels.addButton('options', {
-      id: 'custom-html-css',
-      className: 'fa fa-pencil',
-      command: 'open-custom-html-css',
-      attributes: { title: 'Custom HTML/CSS' },
+    editor.Panels.addButton("options", {
+      id: "custom-html-css",
+      className: "fa fa-pencil",
+      command: "open-custom-html-css",
+      attributes: { title: "Custom HTML/CSS" },
     });
 
-    editor.Commands.add('open-custom-html-css', {
-      run: () => setIsCustomModalOpen(true)
+    editor.Commands.add("open-custom-html-css", {
+      run: () => setIsCustomModalOpen(true),
     });
 
     // Add this inside your useEffect hook, after other block definitions
-    editor.BlockManager.add('google-map', {
-      label: 'Google Map',
-      category: 'Basic',
+    editor.BlockManager.add("google-map", {
+      label: "Google Map",
+      category: "Basic",
       content: {
-        type: 'map',
+        type: "map",
         style: {
-          height: '350px'
-        }
+          height: "350px",
+        },
       },
       media: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#000000"/>
-      </svg>`
+      </svg>`,
     });
 
     // Add this after your GrapesJS initialization
-    editor.DomComponents.addType('map', {
+    editor.DomComponents.addType("map", {
       model: {
         defaults: {
           traits: [
             {
-              type: 'text',
-              name: 'address',
-              label: 'Address',
-              placeholder: 'Enter location',
+              type: "text",
+              name: "address",
+              label: "Address",
+              placeholder: "Enter location",
             },
           ],
         },
       },
       view: {
         onRender() {
-          const address = this.model.get('address') || 'Times Square, New York';
+          const address = this.model.get("address") || "Times Square, New York";
           const encodedAddress = encodeURIComponent(address);
           this.el.innerHTML = `<iframe width="100%" height="100%" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${encodedAddress}" allowfullscreen></iframe>`;
         },
       },
     });
 
- 
-
     if (uidParam && cssuidParam && pageref) {
       setUid(uidParam);
       setCssUid(cssuidParam);
       setPageRef(pageref);
 
-      const fetchContent = async (contentTypeUid, entryUid, setContent, contentKey) => {
+      const fetchContent = async (
+        contentTypeUid,
+        entryUid,
+        setContent,
+        contentKey
+      ) => {
         try {
-          const response = await fetch(`https://eu-api.contentstack.com/v3/content_types/${contentTypeUid}/entries/${entryUid}`, {
-            headers: {
-              'api_key': 'bltd0d04fe9ed5696bc',
-              'authorization': 'cs4b0ee821db9d29665d32a615',
+          const response = await fetch(
+            `https://eu-api.contentstack.com/v3/content_types/${contentTypeUid}/entries/${entryUid}`,
+            {
+              headers: {
+                api_key: "bltd0d04fe9ed5696bc",
+                authorization: "cs4b0ee821db9d29665d32a615",
+              },
             }
-          });
+          );
           const data = await response.json();
           setContent(data.entry[contentKey]);
         } catch (error) {
-          console.error('Error fetching content:', error);
+          console.error("Error fetching content:", error);
         }
       };
 
-      fetchContent(pageref, uidParam, (htmlContent) => {
-        editor.setComponents(htmlContent);
-      }, 'rte');
+      fetchContent(
+        pageref,
+        uidParam,
+        (htmlContent) => {
+          editor.setComponents(htmlContent);
+        },
+        "rte"
+      );
 
-      const css = pageref + '_css';
-      fetchContent(css, cssuidParam, (cssContent) => {
-        editor.setStyle(cssContent);
-      }, 'css');
+      const css = pageref + "_css";
+      fetchContent(
+        css,
+        cssuidParam,
+        (cssContent) => {
+          editor.setStyle(cssContent);
+        },
+        "css"
+      );
     }
 
     // ... rest of your useEffect code ...
@@ -743,9 +838,9 @@ const router = useRouter();
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -763,58 +858,67 @@ const router = useRouter();
   const handleAiPrompt = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.post('/api/generate-component', { 
+      const response = await axios.post("/api/generate-component", {
         prompt: aiPrompt,
-        referenceImage: referenceImage
+        referenceImage: referenceImage,
       });
       let generatedHtml = response.data.html;
-      
+
       // Remove markdown formatting and backticks
-      generatedHtml = generatedHtml.replace(/```html\n|\n```/g, '').trim();
-      
+      generatedHtml = generatedHtml.replace(/```html\n|\n```/g, "").trim();
+
       if (editorRef.current) {
         // Create a new component based on the AI response
         editorRef.current.addComponents(generatedHtml);
-        
+
         setIsModalOpen(false);
-        setAiPrompt('');
+        setAiPrompt("");
         setReferenceImage(null);
-        toast.success('Component generated successfully!');
+        toast.success("Component generated successfully!");
       } else {
-        throw new Error('Editor instance not available');
+        throw new Error("Editor instance not available");
       }
     } catch (error) {
-      console.error('Error processing AI prompt:', error);
-      toast.error('Failed to process AI prompt');
+      console.error("Error processing AI prompt:", error);
+      toast.error("Failed to process AI prompt");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const saveContent = () => {
+  const saveContent = async () => {
+    setIsSaving(true);
     const htmlContent = editorRef.current.getHtml();
     const cssContent = editorRef.current.getCss();
     setContent(htmlContent);
     setCss(cssContent);
-    console.log('HTML Content:', htmlContent);
-    console.log('CSS Content:', cssContent);
-    const contentTypeUid = pageRef || 'home';
+    console.log("HTML Content:", htmlContent);
+    console.log("CSS Content:", cssContent);
+    const contentTypeUid = pageRef || "home";
 
-    const updateContent = async (contentTypeUid, entryUid, contentKey, contentValue) => {
+    const updateContent = async (
+      contentTypeUid,
+      entryUid,
+      contentKey,
+      contentValue
+    ) => {
       try {
-        const response = await fetch(`https://eu-api.contentstack.com/v3/content_types/${contentTypeUid}/entries/${entryUid}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'api_key': 'bltd0d04fe9ed5696bc',
-            'authorization': 'cs4b0ee821db9d29665d32a615',
-          },
-          body: JSON.stringify({
-            entry: {
-              [contentKey]: contentValue,
+        const response = await fetch(
+          `https://eu-api.contentstack.com/v3/content_types/${contentTypeUid}/entries/${entryUid}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              api_key: "bltd0d04fe9ed5696bc",
+              authorization: "cs4b0ee821db9d29665d32a615",
             },
-          }),
-        });
+            body: JSON.stringify({
+              entry: {
+                [contentKey]: contentValue,
+              },
+            }),
+          }
+        );
 
         if (response.ok) {
           console.log(`Content for ${contentKey} updated successfully.`);
@@ -830,30 +934,41 @@ const router = useRouter();
       }
     };
 
-    // Update HTML content
-    updateContent(contentTypeUid, uid, 'rte', htmlContent);
+    try {
+      // Update HTML content
+      await updateContent(contentTypeUid, uid, "rte", htmlContent);
 
-    // Update CSS content
-    const cssContentTypeUid = `${contentTypeUid}_css`;
-    updateContent(cssContentTypeUid, cssUid, 'css', cssContent);
-    toast.success(`Content updated successfully.`);
-    router.push('/dashboard');
+      // Update CSS content
+      const cssContentTypeUid = `${contentTypeUid}_css`;
+      await updateContent(cssContentTypeUid, cssUid, "css", cssContent);
+
+      toast.success(`Content updated successfully.`);
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Error saving content:", error);
+      toast.error("Failed to save content");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const setButtonLink = (editor) => {
     const selected = editor.getSelected();
-    if (selected && selected.is('link')) {
-      const url = prompt('Enter the URL for the button:', 'https://example.com');
+    if (selected && selected.is("link")) {
+      const url = prompt(
+        "Enter the URL for the button:",
+        "https://example.com"
+      );
       if (url) {
         try {
           new URL(url); // Validate URL
-          selected.set('attributes', { href: url, target: '_blank' });
+          selected.set("attributes", { href: url, target: "_blank" });
         } catch {
-          alert('Please enter a valid URL.');
+          alert("Please enter a valid URL.");
         }
       }
     } else {
-      alert('Please select a button first.');
+      alert("Please select a button first.");
     }
   };
 
@@ -862,11 +977,11 @@ const router = useRouter();
       const styleTag = `<style>${customCss}</style>`;
       editorRef.current.addComponents(`${styleTag}${customHtml}`);
       setIsCustomModalOpen(false);
-      setCustomHtml('');
-      setCustomCss('');
-      toast.success('Custom HTML/CSS added successfully!');
+      setCustomHtml("");
+      setCustomCss("");
+      toast.success("Custom HTML/CSS added successfully!");
     } else {
-      toast.error('Editor instance not available');
+      toast.error("Editor instance not available");
     }
   };
 
@@ -876,24 +991,33 @@ const router = useRouter();
       <div className="flex flex-col h-screen">
         <header className="bg-white border-b border-gray-200 shadow-sm">
           <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-            <h1 className="text-xl font-semibold text-gray-800">UI Builder</h1>
-            <button 
-              onClick={saveContent} 
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+            <h1 className="text-xl font-semibold text-gray-800 cursor-pointer" onClick={handleBack}>EZ Builder</h1>
+            <button
+              onClick={saveContent}
+              disabled={isSaving}
+              className={`px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${
+                isSaving ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             >
-              Save Content
+              {isSaving ? "Saving..." : "Save Content"}
             </button>
           </div>
         </header>
-        
+
         <div className="flex-1 p-4">
-          <div id="gjs" className="h-full border border-gray-300 rounded-lg shadow-lg bg-white"></div>
+          <div
+            id="gjs"
+            className="h-full border border-gray-300 rounded-lg shadow-lg bg-white"
+          ></div>
         </div>
       </div>
-      
+
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div ref={modalRef} className="bg-white rounded-lg p-6 w-full max-w-md">
+          <div
+            ref={modalRef}
+            className="bg-white rounded-lg p-6 w-full max-w-md"
+          >
             <h2 className="text-xl font-semibold mb-4">AI Prompt</h2>
             <textarea
               value={aiPrompt}
@@ -914,7 +1038,13 @@ const router = useRouter();
             </div>
             {referenceImage && (
               <div className="mb-4">
-                <Image src={referenceImage} alt="Reference" width={200} height={200} className="object-contain" />
+                <Image
+                  src={referenceImage}
+                  alt="Reference"
+                  width={200}
+                  height={200}
+                  className="object-contain"
+                />
               </div>
             )}
             <div className="flex justify-end">
@@ -933,7 +1063,7 @@ const router = useRouter();
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300 disabled:bg-blue-400"
                 disabled={isLoading}
               >
-                {isLoading ? 'Generating...' : 'Generate'}
+                {isLoading ? "Generating..." : "Generate"}
               </button>
             </div>
           </div>

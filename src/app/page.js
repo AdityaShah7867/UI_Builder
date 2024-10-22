@@ -29,7 +29,7 @@ export default function Home() {
               <p className="text-xl text-gray-600 mb-6">
                 Create stunning landing pages in minutes with our drag-and-drop, no-code platform. Powered by Contentstack for seamless content management.
               </p>
-              <a href="#" className="bg-blue-500 text-white px-6 py-3 rounded-md text-lg font-semibold hover:bg-blue-600 transition duration-300">
+              <a onClick={() => router.push('/auth/login')} className="bg-blue-500 text-white px-6 py-3 rounded-md text-lg font-semibold hover:bg-blue-600 transition duration-300">
                 Start Building Now
               </a>
             </div>
