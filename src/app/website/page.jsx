@@ -18,7 +18,7 @@ const PageContent = () => {
 
     // Fetch website content from API
     if (usernameParam && contentTypeParam) {
-      fetch(`http://localhost:3000/api/website?username=${usernameParam}&contentType=${contentTypeParam}`)
+      fetch(`/api/website?username=${usernameParam}&contentType=${contentTypeParam}`)
         .then(response => response.json())
         .then(data => setWebsiteContent(data))
         .catch(error => console.error('Error fetching website content:', error));

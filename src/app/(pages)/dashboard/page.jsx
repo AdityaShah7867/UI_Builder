@@ -100,7 +100,7 @@ const DashboardPage = () => {
         {/* New Banner */}
         <div className="bg-blue-600 text-white text-center py-2 px-4">
         <a
-            href={`http://localhost:3000/website?username=${username}&contentType=home`}
+            href={`/website?username=${username}&contentType=home`}
             className="underline hover:text-blue-200"
             target="_blank"
             rel="noopener noreferrer"
